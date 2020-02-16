@@ -11,9 +11,9 @@
 		9A25A79A23F0A43F00E9200A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A25A79923F0A43F00E9200A /* SceneDelegate.swift */; };
 		9A25A79C23F0A43F00E9200A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A25A79B23F0A43F00E9200A /* ViewController.swift */; };
 		9A25A79F23F0A43F00E9200A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9A25A79D23F0A43F00E9200A /* Main.storyboard */; };
-		9A25A7A223F0A43F00E9200A /* SharedShoppingList.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9A25A7A023F0A43F00E9200A /* SharedShoppingList.xcdatamodeld */; };
 		9A25A7A423F0A44000E9200A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A25A7A323F0A44000E9200A /* Assets.xcassets */; };
 		9A25A7A723F0A44000E9200A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9A25A7A523F0A44000E9200A /* LaunchScreen.storyboard */; };
+		9A25A7B023F0A4CE00E9200A /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9A25A7AE23F0A4CE00E9200A /* Model.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,10 +22,10 @@
 		9A25A79923F0A43F00E9200A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		9A25A79B23F0A43F00E9200A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		9A25A79E23F0A43F00E9200A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		9A25A7A123F0A43F00E9200A /* SharedShoppingList.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SharedShoppingList.xcdatamodel; sourceTree = "<group>"; };
 		9A25A7A323F0A44000E9200A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9A25A7A623F0A44000E9200A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9A25A7A823F0A44000E9200A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9A25A7AF23F0A4CE00E9200A /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,7 +65,7 @@
 				9A25A7A323F0A44000E9200A /* Assets.xcassets */,
 				9A25A7A523F0A44000E9200A /* LaunchScreen.storyboard */,
 				9A25A7A823F0A44000E9200A /* Info.plist */,
-				9A25A7A023F0A43F00E9200A /* SharedShoppingList.xcdatamodeld */,
+				9A25A7AE23F0A4CE00E9200A /* Model.xcdatamodeld */,
 			);
 			path = SharedShoppingList;
 			sourceTree = "<group>";
@@ -143,7 +143,7 @@
 			files = (
 				9A25A79C23F0A43F00E9200A /* ViewController.swift in Sources */,
 				9A25A79823F0A43F00E9200A /* AppDelegate.swift in Sources */,
-				9A25A7A223F0A43F00E9200A /* SharedShoppingList.xcdatamodeld in Sources */,
+				9A25A7B023F0A4CE00E9200A /* Model.xcdatamodeld in Sources */,
 				9A25A79A23F0A43F00E9200A /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -344,13 +344,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		9A25A7A023F0A43F00E9200A /* SharedShoppingList.xcdatamodeld */ = {
+		9A25A7AE23F0A4CE00E9200A /* Model.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				9A25A7A123F0A43F00E9200A /* SharedShoppingList.xcdatamodel */,
+				9A25A7AF23F0A4CE00E9200A /* Model.xcdatamodel */,
 			);
-			currentVersion = 9A25A7A123F0A43F00E9200A /* SharedShoppingList.xcdatamodel */;
-			path = SharedShoppingList.xcdatamodeld;
+			currentVersion = 9A25A7AF23F0A4CE00E9200A /* Model.xcdatamodel */;
+			path = Model.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
