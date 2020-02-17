@@ -84,23 +84,23 @@ class TestViewController: UIViewController {
         let managedContext =
             appDelegate.persistentContainer.viewContext
         
-           let fetchRequest =
-             NSFetchRequest<ProductCategory>(entityName: "ProductCategory")
-           
-           let categoryRead:[ProductCategory]
-
-           do {
-               categoryRead = try managedContext.fetch(fetchRequest)
-              
-               for cat in categoryRead {
+        let fetchRequest =
+            NSFetchRequest<ProductCategory>(entityName: "ProductCategory")
+        
+        let categoryRead:[ProductCategory]
+        
+        do {
+            categoryRead = try managedContext.fetch(fetchRequest)
+            
+            for cat in categoryRead {
                 print ( "Name: \(String(describing: cat.name))")
                 print ("Children: \(String(describing: cat.isCategoryOfProduct))")
-               }
+            }
             if (categoryRead.count>0) { category = categoryRead[0] }
-
-           } catch let error as NSError {
-               print("Could not fetch. \(error), \(error.userInfo)")
-           }
+            
+        } catch let error as NSError {
+            print("Could not fetch. \(error), \(error.userInfo)")
+        }
 
     }
     @IBAction func delete() {
