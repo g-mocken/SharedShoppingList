@@ -9,23 +9,25 @@
 /* Begin PBXBuildFile section */
 		9A25A79823F0A43F00E9200A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A25A79723F0A43F00E9200A /* AppDelegate.swift */; };
 		9A25A79A23F0A43F00E9200A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A25A79923F0A43F00E9200A /* SceneDelegate.swift */; };
-		9A25A79C23F0A43F00E9200A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A25A79B23F0A43F00E9200A /* ViewController.swift */; };
+		9A25A79C23F0A43F00E9200A /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A25A79B23F0A43F00E9200A /* TestViewController.swift */; };
 		9A25A79F23F0A43F00E9200A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9A25A79D23F0A43F00E9200A /* Main.storyboard */; };
 		9A25A7A423F0A44000E9200A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A25A7A323F0A44000E9200A /* Assets.xcassets */; };
 		9A25A7A723F0A44000E9200A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9A25A7A523F0A44000E9200A /* LaunchScreen.storyboard */; };
 		9A25A7B023F0A4CE00E9200A /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9A25A7AE23F0A4CE00E9200A /* Model.xcdatamodeld */; };
+		9ACEDC6623F9EE94008AFD6D /* ProductTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ACEDC6523F9EE94008AFD6D /* ProductTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		9A25A79423F0A43F00E9200A /* SharedShoppingList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SharedShoppingList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A25A79723F0A43F00E9200A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9A25A79923F0A43F00E9200A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		9A25A79B23F0A43F00E9200A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		9A25A79B23F0A43F00E9200A /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
 		9A25A79E23F0A43F00E9200A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		9A25A7A323F0A44000E9200A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9A25A7A623F0A44000E9200A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9A25A7A823F0A44000E9200A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9A25A7AF23F0A4CE00E9200A /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
+		9ACEDC6523F9EE94008AFD6D /* ProductTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,12 +62,13 @@
 			children = (
 				9A25A79723F0A43F00E9200A /* AppDelegate.swift */,
 				9A25A79923F0A43F00E9200A /* SceneDelegate.swift */,
-				9A25A79B23F0A43F00E9200A /* ViewController.swift */,
+				9A25A79B23F0A43F00E9200A /* TestViewController.swift */,
 				9A25A79D23F0A43F00E9200A /* Main.storyboard */,
 				9A25A7A323F0A44000E9200A /* Assets.xcassets */,
 				9A25A7A523F0A44000E9200A /* LaunchScreen.storyboard */,
 				9A25A7A823F0A44000E9200A /* Info.plist */,
 				9A25A7AE23F0A4CE00E9200A /* Model.xcdatamodeld */,
+				9ACEDC6523F9EE94008AFD6D /* ProductTableViewController.swift */,
 			);
 			path = SharedShoppingList;
 			sourceTree = "<group>";
@@ -141,10 +144,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9A25A79C23F0A43F00E9200A /* ViewController.swift in Sources */,
+				9A25A79C23F0A43F00E9200A /* TestViewController.swift in Sources */,
 				9A25A79823F0A43F00E9200A /* AppDelegate.swift in Sources */,
 				9A25A7B023F0A4CE00E9200A /* Model.xcdatamodeld in Sources */,
 				9A25A79A23F0A43F00E9200A /* SceneDelegate.swift in Sources */,
+				9ACEDC6623F9EE94008AFD6D /* ProductTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

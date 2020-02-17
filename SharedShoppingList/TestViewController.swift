@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-class ViewController: UIViewController {
+class TestViewController: UIViewController {
 
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     
