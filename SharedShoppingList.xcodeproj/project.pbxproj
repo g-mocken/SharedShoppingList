@@ -14,6 +14,8 @@
 		9A25A7A423F0A44000E9200A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A25A7A323F0A44000E9200A /* Assets.xcassets */; };
 		9A25A7A723F0A44000E9200A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9A25A7A523F0A44000E9200A /* LaunchScreen.storyboard */; };
 		9A25A7B023F0A4CE00E9200A /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9A25A7AE23F0A4CE00E9200A /* Model.xcdatamodeld */; };
+		9A493B1223FC8A92003E240D /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A493B1123FC8A92003E240D /* CloudKit.framework */; };
+		9A493B1423FC8C7E003E240D /* CategoryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A493B1323FC8C7E003E240D /* CategoryTableViewController.swift */; };
 		9ACEDC6623F9EE94008AFD6D /* ProductTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ACEDC6523F9EE94008AFD6D /* ProductTableViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -27,6 +29,9 @@
 		9A25A7A623F0A44000E9200A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9A25A7A823F0A44000E9200A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9A25A7AF23F0A4CE00E9200A /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
+		9A493B0F23FC8A8A003E240D /* SharedShoppingList.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SharedShoppingList.entitlements; sourceTree = "<group>"; };
+		9A493B1123FC8A92003E240D /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
+		9A493B1323FC8C7E003E240D /* CategoryTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTableViewController.swift; sourceTree = "<group>"; };
 		9ACEDC6523F9EE94008AFD6D /* ProductTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -35,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A493B1223FC8A92003E240D /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -46,6 +52,7 @@
 			children = (
 				9A25A79623F0A43F00E9200A /* SharedShoppingList */,
 				9A25A79523F0A43F00E9200A /* Products */,
+				9A493B1023FC8A92003E240D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -60,17 +67,27 @@
 		9A25A79623F0A43F00E9200A /* SharedShoppingList */ = {
 			isa = PBXGroup;
 			children = (
+				9A493B0F23FC8A8A003E240D /* SharedShoppingList.entitlements */,
 				9A25A79723F0A43F00E9200A /* AppDelegate.swift */,
 				9A25A79923F0A43F00E9200A /* SceneDelegate.swift */,
 				9A25A79B23F0A43F00E9200A /* TestViewController.swift */,
 				9A25A79D23F0A43F00E9200A /* Main.storyboard */,
+				9ACEDC6523F9EE94008AFD6D /* ProductTableViewController.swift */,
+				9A493B1323FC8C7E003E240D /* CategoryTableViewController.swift */,
 				9A25A7A323F0A44000E9200A /* Assets.xcassets */,
 				9A25A7A523F0A44000E9200A /* LaunchScreen.storyboard */,
 				9A25A7A823F0A44000E9200A /* Info.plist */,
 				9A25A7AE23F0A4CE00E9200A /* Model.xcdatamodeld */,
-				9ACEDC6523F9EE94008AFD6D /* ProductTableViewController.swift */,
 			);
 			path = SharedShoppingList;
+			sourceTree = "<group>";
+		};
+		9A493B1023FC8A92003E240D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9A493B1123FC8A92003E240D /* CloudKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -149,6 +166,7 @@
 				9A25A7B023F0A4CE00E9200A /* Model.xcdatamodeld in Sources */,
 				9A25A79A23F0A43F00E9200A /* SceneDelegate.swift in Sources */,
 				9ACEDC6623F9EE94008AFD6D /* ProductTableViewController.swift in Sources */,
+				9A493B1423FC8C7E003E240D /* CategoryTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -292,6 +310,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = SharedShoppingList/SharedShoppingList.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = J6G8439DVH;
 				INFOPLIST_FILE = SharedShoppingList/Info.plist;
@@ -310,6 +329,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = SharedShoppingList/SharedShoppingList.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = J6G8439DVH;
 				INFOPLIST_FILE = SharedShoppingList/Info.plist;
