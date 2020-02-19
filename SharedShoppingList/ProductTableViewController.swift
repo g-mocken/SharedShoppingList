@@ -16,10 +16,7 @@ class ProductTableViewCell: UITableViewCell{
 }
 class ProductTableViewController: UITableViewController {
     
-    var products: [Product] = []
     var categories: [ProductCategory] = []
-    var uncategorizedProducts: [Product] = []
-    
     var productsInSections: [[Product]] = [[]]
     
     var appDelegate: AppDelegate!
@@ -46,17 +43,9 @@ class ProductTableViewController: UITableViewController {
         
         let fetchRequest1 =
             NSFetchRequest<Product>(entityName: "Product")
-        
-        do {
-            products = try managedContext.fetch(fetchRequest1)
-            // products.sort(by: {a,b in return a.name! < b.name!}) // wrong sorting of umlauts etc.
-            products.sort { $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending }
-
-        } catch let error as NSError {
-            print("Could not fetch. \(error), \(error.userInfo)")
-        }
-        
         fetchRequest1.predicate = NSPredicate(format: "belongsToCategory == nil")
+
+        var uncategorizedProducts: [Product] = []
 
         do {
             uncategorizedProducts = try managedContext.fetch(fetchRequest1)
@@ -66,8 +55,6 @@ class ProductTableViewController: UITableViewController {
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
         }
-        
-        
         
         
         let fetchRequest2 =
@@ -82,9 +69,7 @@ class ProductTableViewController: UITableViewController {
             print("Could not fetch. \(error), \(error.userInfo)")
         }
         
-        productsInSections = [uncategorizedProducts]
-
-        // print ("Category: unknown, \(productsInSections[0])")
+        productsInSections = [uncategorizedProducts] // put uncategorized products in first setion #0
 
         for c in categories {
             fetchRequest1.predicate = NSPredicate(format: "belongsToCategory == %@", c)
@@ -94,9 +79,6 @@ class ProductTableViewController: UITableViewController {
             } catch let error as NSError {
                 print("Could not fetch. \(error), \(error.userInfo)")
             }
-            
-           // print ("Category: \(c.name), \(productsInSections.last)")
-
         }
         
     }
@@ -110,18 +92,7 @@ class ProductTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        
-        /*
-        if section == 0 { // special "unknown category"
-            return uncategorizedProducts.count
-        } else {
-            let category = categories[section-1]
-            let predicate = NSPredicate(format: "belongsToCategory == %@", category)
-            let filteredProducts = (products as NSArray).filtered(using: predicate)
-            return filteredProducts.count
-        }
-        */
+     
         return productsInSections[section].count
     }
     
@@ -129,19 +100,7 @@ class ProductTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "productCell", for: indexPath) as! ProductTableViewCell
         
-        let product:Product
-        /*
-        if indexPath.section == 0 { // special "unknown category"
-            product = uncategorizedProducts[indexPath.row]
-        } else {
-            let category = categories[indexPath.section-1]
-            let predicate = NSPredicate(format: "belongsToCategory == %@", category)
-            let filteredProducts = (products as NSArray).filtered(using: predicate)
-
-            product = filteredProducts[indexPath.row] as! Product
-        }
-        */
-        product = productsInSections[indexPath.section][indexPath.row] as! Product
+        let  product = productsInSections[indexPath.section][indexPath.row]
 
         // Configure the cell...
         cell.title.text = product.name
@@ -169,18 +128,7 @@ class ProductTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
       
         if editingStyle == .delete {
-            let productToDelete: Product
-            /*
-            if indexPath.section == 0 { // special "unknown category"
-                productToDelete = uncategorizedProducts[indexPath.row]
-            } else {
-                let category = categories[indexPath.section-1]
-                let predicate = NSPredicate(format: "belongsToCategory == %@", category)
-                let filteredProducts = (products as NSArray).filtered(using: predicate)
-                productToDelete = filteredProducts[indexPath.row] as! Product
-            }
-             */
-            productToDelete = productsInSections[indexPath.section][indexPath.row]
+            let productToDelete = productsInSections[indexPath.section][indexPath.row]
 
             managedContext.delete(productToDelete)
             
@@ -188,14 +136,6 @@ class ProductTableViewController: UITableViewController {
             do {
                 try managedContext.save()
                 productsInSections[indexPath.section].remove(at: indexPath.row)
-                /*
-                if indexPath.section == 0 { // special "unknown category"
-                    uncategorizedProducts.remove(at: indexPath.row)
-                }
-                else {
-                    
-                }
-                */
             } catch let error as NSError {
                 print("Could not save. \(error), \(error.userInfo)")
             }
