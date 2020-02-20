@@ -15,7 +15,7 @@ class CategoryTableViewCell: UITableViewCell{
 }
 
 protocol CategoryTableViewControllerDelegate: AnyObject {
-    func selected(item:Int)->Void
+    func selected(item:ProductCategory)->Void
     func updateCategories()
 }
 
@@ -158,7 +158,7 @@ class CategoryTableViewController: UITableViewController {
         selectedIndexPath = indexPath
 
         tableView.reloadData()
-        delegate?.selected(item:selectedIndexPath!.row)
+        delegate?.selected(item:categories[selectedIndexPath!.row])
         
     }
     

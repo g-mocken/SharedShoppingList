@@ -26,8 +26,8 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
     var appDelegate: AppDelegate!
     var managedContext: NSManagedObjectContext!
     
-    var selectedIndexPath: IndexPath?
-
+    var selectedProduct: Product?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -173,20 +173,24 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath){
         print("Selected: row =\(indexPath.row), section=\(indexPath.section)\n")
         tableView.deselectRow(at: indexPath as IndexPath, animated: true)
-        selectedIndexPath = indexPath
+        //selectedProduct = productsInSections[indexPath.section][indexPath.row] // too late! runs after segue.
     }
     
     
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        print("Segue triggered")
+
         if segue.identifier == "goToCategory"{
             let vc = segue.destination as! CategoryTableViewController
             vc.delegate = self
             if let indexPath = tableView.indexPathForSelectedRow {
-                
-                if let index = categories.firstIndex(where: { productsInSections[indexPath.section][indexPath.row].belongsToCategory == $0 }) {
-                    print("The first index  = \(index)")
-                    vc.selectedIndexPath = IndexPath(row: index, section: 0)
+                selectedProduct = productsInSections[indexPath.section][indexPath.row]
+                if let sp = selectedProduct {
+                    if let index = categories.firstIndex(where: { sp.belongsToCategory == $0 }) {
+                        print("The first index  = \(index)")
+                        vc.selectedIndexPath = IndexPath(row: index, section: 0)
+                    }
                 }
             }
         }
@@ -197,12 +201,12 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
     /**
      Called by the sub-table on selecting a row
      */
-    func selected(item:Int)->Void {
+    func selected(item:ProductCategory)->Void {
         
-        if let indexPath = selectedIndexPath
+        if let sp = selectedProduct
         {
-            print("Assigning selected product #\(indexPath) to selected category #\(item)")
-            productsInSections[indexPath.section][indexPath.row].belongsToCategory=categories[item]
+            print("Assigning selected product #\(sp) to selected category #\(item)")
+            sp.belongsToCategory=item
             // save
             do {
                 try managedContext.save()
