@@ -87,10 +87,10 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        
         buildArrays()
-        
+        tableView.reloadData()
+        print("reload")
+
     }
     
     
@@ -120,7 +120,7 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if section == 0 { // special "unknown category"
-            return NSLocalizedString("Uncategorized products", comment: "")
+            return NSLocalizedString("Uncategorized", comment: "")
         } else {
             return categories[section-1].name
         }
@@ -189,7 +189,7 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
                 if let sp = selectedProduct {
                     if let index = categories.firstIndex(where: { sp.belongsToCategory == $0 }) {
                         print("The first index  = \(index)")
-                        vc.selectedIndexPath = IndexPath(row: index, section: 0)
+                        vc.selectedIndexPath = IndexPath(row: index + 1, section: 0)
                     }
                 }
             }
@@ -201,11 +201,11 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
     /**
      Called by the sub-table on selecting a row
      */
-    func selected(item:ProductCategory)->Void {
+    func selected(item:ProductCategory?)->Void {
         
         if let sp = selectedProduct
         {
-            print("Assigning selected product #\(sp) to selected category #\(item)")
+            print("Assigning selected product #\(sp) to selected category #\(String(describing: item))")
             sp.belongsToCategory=item
             // save
             do {
@@ -224,7 +224,6 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
      */
     @IBAction func unwindToParent(segue: UIStoryboardSegue) {
         print("coming back from selection table after selection")
-        
     }
     
     

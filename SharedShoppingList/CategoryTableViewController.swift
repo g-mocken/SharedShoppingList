@@ -15,7 +15,7 @@ class CategoryTableViewCell: UITableViewCell{
 }
 
 protocol CategoryTableViewControllerDelegate: AnyObject {
-    func selected(item:ProductCategory)->Void
+    func selected(item:ProductCategory?)->Void
     func updateCategories()
 }
 
@@ -62,9 +62,12 @@ class CategoryTableViewController: UITableViewController {
               print("Could not fetch. \(error), \(error.userInfo)")
           }
         
-        if (selectedIndexPath != nil){
-            let cell = self.tableView(tableView, cellForRowAt: selectedIndexPath!)
-            cell.accessoryType = UITableViewCell.AccessoryType.checkmark
+        if (delegate != nil) {
+            print("category VC for selection")
+        } else {
+            print("category VC for editing")
+            selectedIndexPath = nil
+            // TODO: cell selection -> edit name
         }
         
       }
@@ -78,19 +81,20 @@ class CategoryTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return categories.count
+        return categories.count + 1
     }
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCell", for: indexPath) as! CategoryTableViewCell
 
-        let category = categories[indexPath.row]
-        
-           // Configure the cell...
-        cell.title.text = category.name
-        // Configure the cell...
-        
+        if indexPath.row == 0 {
+            cell.title.text = NSLocalizedString("Uncategorized", comment: "")
+        }
+        else {
+            let category = categories[indexPath.row-1]
+            cell.title.text = category.name
+        }
         if  selectedIndexPath?.row == indexPath.row {
             cell.accessoryType = UITableViewCell.AccessoryType.checkmark
         } else {
@@ -106,7 +110,7 @@ class CategoryTableViewController: UITableViewController {
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
-        return true
+        return indexPath.row != 0
     }
     
 
@@ -115,7 +119,7 @@ class CategoryTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             
-            let categoryToDelete = categories[indexPath.row]
+            let categoryToDelete = categories[indexPath.row-1]
 
             managedContext.delete(categoryToDelete)
             
@@ -158,8 +162,13 @@ class CategoryTableViewController: UITableViewController {
         selectedIndexPath = indexPath
 
         tableView.reloadData()
-        delegate?.selected(item:categories[selectedIndexPath!.row])
         
+        if selectedIndexPath!.row == 0 {
+            delegate?.selected(item:nil)
+        } else {
+            delegate?.selected(item:categories[selectedIndexPath!.row-1])
+        }
+        delegate = nil
     }
     
     

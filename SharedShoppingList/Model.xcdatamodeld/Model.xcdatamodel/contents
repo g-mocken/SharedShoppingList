@@ -25,7 +25,7 @@
     <entity name="ProductCategory" representedClassName="ProductCategory" syncable="YES" codeGenerationType="class">
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="isAvailableInShop" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Shop" inverseName="hasCategories" inverseEntity="Shop"/>
-        <relationship name="isCategoryOfProduct" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Product" inverseName="belongsToCategory" inverseEntity="Product"/>
+        <relationship name="isCategoryOfProduct" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Product" inverseName="belongsToCategory" inverseEntity="Product"/>
     </entity>
     <entity name="Shop" representedClassName="Shop" syncable="YES" codeGenerationType="class">
         <attribute name="name" optional="YES" attributeType="String"/>
