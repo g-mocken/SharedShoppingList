@@ -16,6 +16,7 @@ class CategoryTableViewCell: UITableViewCell{
 
 protocol CategoryTableViewControllerDelegate: AnyObject {
     func selected(item:Int)->Void
+    func updateCategories()
 }
 
 
@@ -208,6 +209,7 @@ class CategoryTableViewController: UITableViewController {
             
             print("Did save")
             self.tableView.reloadData()
+            self.delegate?.updateCategories()
         }
         
     }

@@ -15,6 +15,10 @@ class ProductTableViewCell: UITableViewCell{
     
 }
 class ProductTableViewController: UITableViewController, CategoryTableViewControllerDelegate {
+    func updateCategories() {
+        buildArrays()
+    }
+    
     
     var categories: [ProductCategory] = []
     var productsInSections: [[Product]] = [[]]
@@ -251,7 +255,7 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
                         
             let product = NSEntityDescription.insertNewObject(forEntityName: "Product", into: self.managedContext) as! Product
             product.name = name // no need to use KVC! class is auto-generated
-            product.belongsToCategory = self.categories[0] // for testing, assign fixed category
+            product.belongsToCategory = nil //self.categories[0] // for testing, assign fixed category
             print ("New = \(name)")
             
             // save
