@@ -14,8 +14,19 @@ class CategoryTableViewCell: UITableViewCell{
     
 }
 
+protocol CategoryTableViewControllerDelegate: AnyObject {
+    func selected(item:Int)->Void
+}
+
+
+
+    
 class CategoryTableViewController: UITableViewController {
 
+    weak var delegate:CategoryTableViewControllerDelegate?
+    var selectedIndexPath: IndexPath?
+
+    
     var categories: [ProductCategory] = []
     var appDelegate: AppDelegate!
     var managedContext: NSManagedObjectContext!
@@ -49,6 +60,12 @@ class CategoryTableViewController: UITableViewController {
           } catch let error as NSError {
               print("Could not fetch. \(error), \(error.userInfo)")
           }
+        
+        if (selectedIndexPath != nil){
+            let cell = self.tableView(tableView, cellForRowAt: selectedIndexPath!)
+            cell.accessoryType = UITableViewCell.AccessoryType.checkmark
+        }
+        
       }
     
     // MARK: - Table view data source
@@ -72,6 +89,13 @@ class CategoryTableViewController: UITableViewController {
            // Configure the cell...
         cell.title.text = category.name
         // Configure the cell...
+        
+        if  selectedIndexPath?.row == indexPath.row {
+            cell.accessoryType = UITableViewCell.AccessoryType.checkmark
+        } else {
+            cell.accessoryType = UITableViewCell.AccessoryType.none
+
+        }
 
         return cell
     }
@@ -124,7 +148,20 @@ class CategoryTableViewController: UITableViewController {
         return true
     }
     */
+    
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath){
+        print("Selected: row =\(indexPath.row), section=\(indexPath.section)\n")
+        tableView.deselectRow(at: indexPath as IndexPath, animated: true)
 
+        selectedIndexPath = indexPath
+
+        tableView.reloadData()
+        delegate?.selected(item:selectedIndexPath!.row)
+        
+    }
+    
+    
     fileprivate func getName(title: String, body: String, cancelButton: String, cancelCallback:@escaping () -> Void, confirmButton: String, confirmCallback:@escaping (String) -> Void) {
         
         let alert = UIAlertController(title: title, message: body, preferredStyle: .alert)

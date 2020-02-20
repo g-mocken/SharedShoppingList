@@ -14,7 +14,7 @@ class ProductTableViewCell: UITableViewCell{
     @IBOutlet var title: UILabel!
     
 }
-class ProductTableViewController: UITableViewController {
+class ProductTableViewController: UITableViewController, CategoryTableViewControllerDelegate {
     
     var categories: [ProductCategory] = []
     var productsInSections: [[Product]] = [[]]
@@ -22,6 +22,8 @@ class ProductTableViewController: UITableViewController {
     var appDelegate: AppDelegate!
     var managedContext: NSManagedObjectContext!
     
+    var selectedIndexPath: IndexPath?
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -37,16 +39,13 @@ class ProductTableViewController: UITableViewController {
     }
     
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        
+    fileprivate func buildArrays() {
         let fetchRequest1 =
             NSFetchRequest<Product>(entityName: "Product")
         fetchRequest1.predicate = NSPredicate(format: "belongsToCategory == nil")
-
+        
         var uncategorizedProducts: [Product] = []
-
+        
         do {
             uncategorizedProducts = try managedContext.fetch(fetchRequest1)
             // products.sort(by: {a,b in return a.name! < b.name!}) // wrong sorting of umlauts etc.
@@ -70,7 +69,7 @@ class ProductTableViewController: UITableViewController {
         }
         
         productsInSections = [uncategorizedProducts] // put uncategorized products in first setion #0
-
+        
         for c in categories {
             fetchRequest1.predicate = NSPredicate(format: "belongsToCategory == %@", c)
             fetchRequest1.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.localizedStandardCompare))]
@@ -80,6 +79,13 @@ class ProductTableViewController: UITableViewController {
                 print("Could not fetch. \(error), \(error.userInfo)")
             }
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        
+        buildArrays()
         
     }
     
@@ -159,6 +165,61 @@ class ProductTableViewController: UITableViewController {
     }
     */
     
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath){
+        print("Selected: row =\(indexPath.row), section=\(indexPath.section)\n")
+        tableView.deselectRow(at: indexPath as IndexPath, animated: true)
+        selectedIndexPath = indexPath
+    }
+    
+    
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToCategory"{
+            let vc = segue.destination as! CategoryTableViewController
+            vc.delegate = self
+            if let indexPath = tableView.indexPathForSelectedRow {
+                
+                if let index = categories.firstIndex(where: { productsInSections[indexPath.section][indexPath.row].belongsToCategory == $0 }) {
+                    print("The first index  = \(index)")
+                    vc.selectedIndexPath = IndexPath(row: index, section: 0)
+                }
+            }
+        }
+    }
+    
+    
+    
+    /**
+     Called by the sub-table on selecting a row
+     */
+    func selected(item:Int)->Void {
+        
+        if let indexPath = selectedIndexPath
+        {
+            print("Assigning selected product #\(indexPath) to selected category #\(item)")
+            productsInSections[indexPath.section][indexPath.row].belongsToCategory=categories[item]
+            // save
+            do {
+                try managedContext.save()
+            } catch let error as NSError {
+                print("Could not save. \(error), \(error.userInfo)")
+            }
+            buildArrays()
+            
+        }
+        tableView.reloadData()
+        print("reload")
+    }
+    
+    /** See here ho to define unwind segue for auto-going back: https://developer.apple.com/library/archive/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html
+     */
+    @IBAction func unwindToParent(segue: UIStoryboardSegue) {
+        print("coming back from selection table after selection")
+        
+    }
+    
+    
     fileprivate func getName(title: String, body: String, cancelButton: String, cancelCallback:@escaping () -> Void, confirmButton: String, confirmCallback:@escaping (String) -> Void) {
         
         let alert = UIAlertController(title: title, message: body, preferredStyle: .alert)
@@ -196,8 +257,8 @@ class ProductTableViewController: UITableViewController {
             // save
             do {
                 try self.managedContext.save()
-                self.productsInSections[0+1].append(product)
-                self.productsInSections[0+1].sort { $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending }
+                self.productsInSections[0].append(product)
+                self.productsInSections[0].sort { $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending }
 
             } catch let error as NSError {
                 print("Could not save. \(error), \(error.userInfo)")
