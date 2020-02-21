@@ -25,8 +25,9 @@ protocol CategoryTableViewControllerDelegate: AnyObject {
 class CategoryTableViewController: UITableViewController {
 
     weak var delegate:CategoryTableViewControllerDelegate?
-    var selectedIndexPath: IndexPath?
 
+    var selectedCategory: ProductCategory?
+    
     
     var categories: [ProductCategory] = []
     var appDelegate: AppDelegate!
@@ -66,7 +67,7 @@ class CategoryTableViewController: UITableViewController {
             print("category VC for selection")
         } else {
             print("category VC for editing")
-            selectedIndexPath = nil
+            selectedCategory = nil
             // TODO: cell selection -> edit name
         }
         
@@ -90,18 +91,21 @@ class CategoryTableViewController: UITableViewController {
 
         if indexPath.row == 0 {
             cell.title.text = NSLocalizedString("Uncategorized", comment: "")
-        }
-        else {
+            if selectedCategory == nil {
+                cell.accessoryType = UITableViewCell.AccessoryType.checkmark
+            } else {
+                cell.accessoryType = UITableViewCell.AccessoryType.none
+            }
+        } else {
             let category = categories[indexPath.row-1]
             cell.title.text = category.name
+            if selectedCategory == categories[indexPath.row-1] {
+                cell.accessoryType = UITableViewCell.AccessoryType.checkmark
+            } else {
+                cell.accessoryType = UITableViewCell.AccessoryType.none
+            }
         }
-        if  selectedIndexPath?.row == indexPath.row {
-            cell.accessoryType = UITableViewCell.AccessoryType.checkmark
-        } else {
-            cell.accessoryType = UITableViewCell.AccessoryType.none
-
-        }
-
+        
         return cell
     }
     
@@ -159,14 +163,14 @@ class CategoryTableViewController: UITableViewController {
         print("Selected: row =\(indexPath.row), section=\(indexPath.section)\n")
         tableView.deselectRow(at: indexPath as IndexPath, animated: true)
 
-        selectedIndexPath = indexPath
-
         tableView.reloadData()
         
-        if selectedIndexPath!.row == 0 {
+        if indexPath.row == 0 {
             delegate?.selected(item:nil)
+            selectedCategory = nil
         } else {
-            delegate?.selected(item:categories[selectedIndexPath!.row-1])
+            selectedCategory = categories[indexPath.row-1]
+            delegate?.selected(item:selectedCategory)
         }
         delegate = nil
     }
@@ -192,6 +196,7 @@ class CategoryTableViewController: UITableViewController {
             textField.text = ""
             textField.clearButtonMode = .always
             textField.clearsOnBeginEditing = false
+            textField.autocorrectionType = .yes
         })
 
         self.present(alert, animated: true, completion: nil)

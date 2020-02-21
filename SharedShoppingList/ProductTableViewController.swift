@@ -186,14 +186,7 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
             vc.delegate = self
             if let indexPath = tableView.indexPathForSelectedRow {
                 selectedProduct = productsInSections[indexPath.section][indexPath.row]
-                if let sp = selectedProduct {
-                    if let index = categories.firstIndex(where: { sp.belongsToCategory == $0 }) {
-                        print("The first index  = \(index)")
-                        vc.selectedIndexPath = IndexPath(row: index + 1, section: 0)
-                    } else {
-                        vc.selectedIndexPath = IndexPath(row: 0, section: 0)
-                    }
-                }
+                vc.selectedCategory = selectedProduct?.belongsToCategory
             }
         }
     }
@@ -249,6 +242,7 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
             textField.text = ""
             textField.clearButtonMode = .always
             textField.clearsOnBeginEditing = false
+            textField.autocorrectionType = .yes
         })
 
         self.present(alert, animated: true, completion: nil)
