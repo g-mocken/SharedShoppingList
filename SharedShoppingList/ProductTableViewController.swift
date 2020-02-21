@@ -14,7 +14,9 @@ class ProductTableViewCell: UITableViewCell{
     @IBOutlet var title: UILabel!
     
 }
-class ProductTableViewController: UITableViewController, CategoryTableViewControllerDelegate {
+class ProductTableViewController: UITableViewController, CategoryTableViewControllerDelegate, ProductDetailViewControllerDelegate {
+  
+    
     func updateCategories() {
         buildArrays()
     }
@@ -89,7 +91,6 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
         super.viewWillAppear(animated)
         buildArrays()
         tableView.reloadData()
-        print("reload")
 
     }
     
@@ -181,13 +182,23 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         print("Segue triggered")
 
-        if segue.identifier == "goToCategory"{
+        switch (segue.identifier ?? ""){
+        case "goToCategory":
             let vc = segue.destination as! CategoryTableViewController
             vc.delegate = self
             if let indexPath = tableView.indexPathForSelectedRow {
                 selectedProduct = productsInSections[indexPath.section][indexPath.row]
                 vc.selectedCategory = selectedProduct?.belongsToCategory
             }
+        case "goToProductDetail":
+            let vc = segue.destination as! ProductDetailViewController
+            vc.delegate = self
+            if let indexPath = tableView.indexPath(for: (sender as? UITableViewCell)!) {
+                selectedProduct = productsInSections[indexPath.section][indexPath.row]
+                vc.product = selectedProduct
+            }
+        default:
+            ()
         }
     }
     
@@ -196,12 +207,12 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
     /**
      Called by the sub-table on selecting a row
      */
-    func selected(item:ProductCategory?)->Void {
+    func assignCategoryToSelectedProduct(category:ProductCategory?)->Void {
         
-        if let sp = selectedProduct
+        if let product = selectedProduct
         {
-            print("Assigning selected product #\(sp) to selected category #\(String(describing: item))")
-            sp.belongsToCategory=item
+            print("Assigning category \(category?.name ?? "nil") to the selected product \(product.name ?? "nil")")
+            product.belongsToCategory=category
             // save
             do {
                 try managedContext.save()
@@ -212,13 +223,39 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
             
         }
         tableView.reloadData()
-        print("reload")
     }
+    
+    
     
     /** See here ho to define unwind segue for auto-going back: https://developer.apple.com/library/archive/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html
      */
     @IBAction func unwindToParent(segue: UIStoryboardSegue) {
-        print("coming back from selection table after selection")
+        
+        switch (segue.identifier ?? ""){
+        case "returnFromProductDetail":
+            print("returnFromProductDetail")
+            if let product = selectedProduct
+            {
+                product.name = (segue.source as! ProductDetailViewController).name.text
+                // save
+                do {
+                    try managedContext.save()
+                } catch let error as NSError {
+                    print("Could not save. \(error), \(error.userInfo)")
+                }
+                buildArrays()
+            }
+            tableView.reloadData()
+
+            
+            
+        case "returnFromProductCategory":
+            print("returnFromProductCategory")
+            // this is triggered before the selection is triggered
+        default:
+            ()
+        }
+    
     }
     
     

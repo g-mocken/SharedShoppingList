@@ -17,6 +17,7 @@
 		9A493B1223FC8A92003E240D /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A493B1123FC8A92003E240D /* CloudKit.framework */; };
 		9A493B1423FC8C7E003E240D /* CategoryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A493B1323FC8C7E003E240D /* CategoryTableViewController.swift */; };
 		9ACEDC6623F9EE94008AFD6D /* ProductTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ACEDC6523F9EE94008AFD6D /* ProductTableViewController.swift */; };
+		9AE3D99624005FA400AF9CD7 /* ProductDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE3D99524005FA400AF9CD7 /* ProductDetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 		9A493B1123FC8A92003E240D /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		9A493B1323FC8C7E003E240D /* CategoryTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTableViewController.swift; sourceTree = "<group>"; };
 		9ACEDC6523F9EE94008AFD6D /* ProductTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductTableViewController.swift; sourceTree = "<group>"; };
+		9AE3D99524005FA400AF9CD7 /* ProductDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductDetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,10 +73,11 @@
 				9A25A79723F0A43F00E9200A /* AppDelegate.swift */,
 				9A25A79923F0A43F00E9200A /* SceneDelegate.swift */,
 				9A25A79B23F0A43F00E9200A /* TestViewController.swift */,
-				9A25A79D23F0A43F00E9200A /* Main.storyboard */,
 				9ACEDC6523F9EE94008AFD6D /* ProductTableViewController.swift */,
+				9AE3D99524005FA400AF9CD7 /* ProductDetailViewController.swift */,
 				9A493B1323FC8C7E003E240D /* CategoryTableViewController.swift */,
 				9A25A7A323F0A44000E9200A /* Assets.xcassets */,
+				9A25A79D23F0A43F00E9200A /* Main.storyboard */,
 				9A25A7A523F0A44000E9200A /* LaunchScreen.storyboard */,
 				9A25A7A823F0A44000E9200A /* Info.plist */,
 				9A25A7AE23F0A4CE00E9200A /* Model.xcdatamodeld */,
@@ -163,6 +166,7 @@
 			files = (
 				9A25A79C23F0A43F00E9200A /* TestViewController.swift in Sources */,
 				9A25A79823F0A43F00E9200A /* AppDelegate.swift in Sources */,
+				9AE3D99624005FA400AF9CD7 /* ProductDetailViewController.swift in Sources */,
 				9A25A7B023F0A4CE00E9200A /* Model.xcdatamodeld in Sources */,
 				9A25A79A23F0A43F00E9200A /* SceneDelegate.swift in Sources */,
 				9ACEDC6623F9EE94008AFD6D /* ProductTableViewController.swift in Sources */,
