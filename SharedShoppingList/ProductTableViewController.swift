@@ -190,6 +190,8 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
                     if let index = categories.firstIndex(where: { sp.belongsToCategory == $0 }) {
                         print("The first index  = \(index)")
                         vc.selectedIndexPath = IndexPath(row: index + 1, section: 0)
+                    } else {
+                        vc.selectedIndexPath = IndexPath(row: 0, section: 0)
                     }
                 }
             }
