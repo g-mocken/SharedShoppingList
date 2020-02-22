@@ -64,14 +64,14 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="productCell" editingAccessoryType="detailButton" id="Y2l-r8-8Xl" customClass="ProductTableViewCell" customModule="SharedShoppingList" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="320" height="43"/>
+                                <rect key="frame" x="0.0" y="28" width="320" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Y2l-r8-8Xl" id="DYe-c3-TgR">
-                                    <rect key="frame" x="0.0" y="0.0" width="293" height="43"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="293" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Product Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="37U-oT-99q">
-                                            <rect key="frame" x="16" y="11" width="269" height="21"/>
+                                            <rect key="frame" x="16" y="11" width="269" height="21.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -223,6 +223,7 @@
                         <segue destination="BYZ-38-t0r" kind="relationship" relationship="viewControllers" id="jCJ-m5-Axt"/>
                         <segue destination="u0g-cG-CBN" kind="relationship" relationship="viewControllers" id="ROU-Ng-mba"/>
                         <segue destination="BrE-sA-Kfk" kind="relationship" relationship="viewControllers" id="cGa-N0-5zg"/>
+                        <segue destination="Lcw-fm-vxD" kind="relationship" relationship="viewControllers" id="zG9-sb-Sv3"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="U3K-cQ-wQt" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -278,7 +279,7 @@
                                     <constraints>
                                         <constraint firstItem="asf-ty-Xvt" firstAttribute="leading" secondItem="2Pk-al-d5P" secondAttribute="leadingMargin" id="aE3-NV-n7w"/>
                                         <constraint firstItem="asf-ty-Xvt" firstAttribute="top" secondItem="2Pk-al-d5P" secondAttribute="topMargin" id="iWJ-Kl-Rfc"/>
-                                        <constraint firstAttribute="bottomMargin" secondItem="asf-ty-Xvt" secondAttribute="bottom" id="yPQ-lx-t4Y"/>
+                                        <constraint firstItem="asf-ty-Xvt" firstAttribute="bottom" secondItem="2Pk-al-d5P" secondAttribute="bottomMargin" id="yPQ-lx-t4Y"/>
                                         <constraint firstItem="asf-ty-Xvt" firstAttribute="trailing" secondItem="2Pk-al-d5P" secondAttribute="trailingMargin" id="zZX-AQ-qFX"/>
                                     </constraints>
                                 </tableViewCellContentView>
@@ -334,11 +335,89 @@
             </objects>
             <point key="canvasLocation" x="1127" y="1532"/>
         </scene>
+        <!--ShoppingListTableViewController-->
+        <scene sceneID="IrF-Nz-XI0">
+            <objects>
+                <tableViewController id="SLm-eX-4FH" userLabel="ShoppingListTableViewController" customClass="ShoppingListTableViewController" customModule="SharedShoppingList" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="65b-fD-sxj">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="listCell" editingAccessoryType="detailButton" id="DoT-rq-pMO" customClass="ShoppingListTableViewCell" customModule="SharedShoppingList" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="320" height="43"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="DoT-rq-pMO" id="lRX-KK-zaP">
+                                    <rect key="frame" x="0.0" y="0.0" width="293" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="List Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k1y-NN-BUV" userLabel="Title">
+                                            <rect key="frame" x="16" y="11" width="269" height="21"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="k1y-NN-BUV" firstAttribute="top" secondItem="lRX-KK-zaP" secondAttribute="topMargin" id="GKQ-Y8-6u8"/>
+                                        <constraint firstItem="k1y-NN-BUV" firstAttribute="leading" secondItem="lRX-KK-zaP" secondAttribute="leadingMargin" id="vQJ-Zi-AMy"/>
+                                        <constraint firstItem="k1y-NN-BUV" firstAttribute="bottom" secondItem="lRX-KK-zaP" secondAttribute="bottomMargin" id="vcN-YJ-huO"/>
+                                        <constraint firstItem="k1y-NN-BUV" firstAttribute="trailing" secondItem="lRX-KK-zaP" secondAttribute="trailingMargin" id="wsU-02-QEG"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="title" destination="k1y-NN-BUV" id="vrM-L6-BMa"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="SLm-eX-4FH" id="0se-kI-P9D"/>
+                            <outlet property="delegate" destination="SLm-eX-4FH" id="Gfx-Fk-Xe8"/>
+                        </connections>
+                    </tableView>
+                    <toolbarItems>
+                        <barButtonItem systemItem="add" id="3V4-kE-nho">
+                            <connections>
+                                <action selector="addList:" destination="SLm-eX-4FH" id="13H-jP-cRM"/>
+                            </connections>
+                        </barButtonItem>
+                    </toolbarItems>
+                    <navigationItem key="navigationItem" title="Lists" id="cJR-jE-bjS"/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0HG-iX-gq7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2123" y="2214"/>
+        </scene>
+        <!--ShoppingListNavigationController-->
+        <scene sceneID="Swl-IC-NEe">
+            <objects>
+                <navigationController title="ShoppingListNavigationController" automaticallyAdjustsScrollViewInsets="NO" toolbarHidden="NO" id="Lcw-fm-vxD" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Lists" image="list.dash" catalog="system" id="6pu-ii-KJy"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="yF9-oZ-Rof">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Zvp-qh-bhM">
+                        <rect key="frame" x="0.0" y="470" width="320" height="49"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
+                    <connections>
+                        <segue destination="SLm-eX-4FH" kind="relationship" relationship="rootViewController" id="Mff-GM-mCl"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="fmA-Ll-udH" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1127" y="2214"/>
+        </scene>
     </scenes>
     <resources>
         <image name="cube.box" catalog="system" width="64" height="62"/>
         <image name="folder" catalog="system" width="64" height="46"/>
         <image name="hammer" catalog="system" width="64" height="56"/>
+        <image name="list.dash" catalog="system" width="64" height="42"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="ODe-FV-Bwy"/>

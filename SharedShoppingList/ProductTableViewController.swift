@@ -12,8 +12,8 @@ import CoreData
 
 class ProductTableViewCell: UITableViewCell{
     @IBOutlet var title: UILabel!
-    
 }
+
 class ProductTableViewController: UITableViewController, CategoryTableViewControllerDelegate, ProductDetailViewControllerDelegate {
   
     
