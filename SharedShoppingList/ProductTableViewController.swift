@@ -229,7 +229,7 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
     
     /** See here ho to define unwind segue for auto-going back: https://developer.apple.com/library/archive/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html
      */
-    @IBAction func unwindToParent(segue: UIStoryboardSegue) {
+    @IBAction func unwindToProductScene(segue: UIStoryboardSegue) {
         
         switch (segue.identifier ?? ""){
         case "returnFromProductDetail":

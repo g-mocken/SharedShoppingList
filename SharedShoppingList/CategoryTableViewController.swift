@@ -22,7 +22,7 @@ protocol CategoryTableViewControllerDelegate: AnyObject {
 
 
     
-class CategoryTableViewController: UITableViewController {
+class CategoryTableViewController: UITableViewController, CategoryDetailViewControllerDelegate {
 
     weak var delegate:CategoryTableViewControllerDelegate?
 
@@ -49,20 +49,7 @@ class CategoryTableViewController: UITableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
           super.viewWillAppear(animated)
-          
-          
-          let fetchRequest =
-              NSFetchRequest<ProductCategory>(entityName: "ProductCategory")
-          
-          do {
-              categories = try managedContext.fetch(fetchRequest)
-              // products.sort(by: {a,b in return a.name! < b.name!}) // wrong sorting of umlauts etc.
-              categories.sort { $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending }
-
-          } catch let error as NSError {
-              print("Could not fetch. \(error), \(error.userInfo)")
-          }
-        
+      
         if (delegate != nil) {
             print("category VC for selection")
         } else {
@@ -71,8 +58,28 @@ class CategoryTableViewController: UITableViewController {
             // TODO: cell selection -> edit name
         }
         
-      }
+        buildArrays()
+        tableView.reloadData()
+
+      
+        
+    }
     
+    
+    fileprivate func buildArrays() {
+        
+        let fetchRequest =
+            NSFetchRequest<ProductCategory>(entityName: "ProductCategory")
+        
+        do {
+            categories = try managedContext.fetch(fetchRequest)
+            // products.sort(by: {a,b in return a.name! < b.name!}) // wrong sorting of umlauts etc.
+            categories.sort { $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending }
+            
+        } catch let error as NSError {
+            print("Could not fetch. \(error), \(error.userInfo)")
+        }
+    }
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -91,7 +98,8 @@ class CategoryTableViewController: UITableViewController {
 
         if indexPath.row == 0 {
             cell.title.text = NSLocalizedString("Uncategorized", comment: "")
-            if selectedCategory == nil {
+
+            if (selectedCategory == nil) && (delegate != nil){
                 cell.accessoryType = UITableViewCell.AccessoryType.checkmark
             } else {
                 cell.accessoryType = UITableViewCell.AccessoryType.none
@@ -99,12 +107,14 @@ class CategoryTableViewController: UITableViewController {
         } else {
             let category = categories[indexPath.row-1]
             cell.title.text = category.name
-            if selectedCategory == categories[indexPath.row-1] {
+            if (selectedCategory == categories[indexPath.row-1]) && (delegate != nil) {
                 cell.accessoryType = UITableViewCell.AccessoryType.checkmark
             } else {
                 cell.accessoryType = UITableViewCell.AccessoryType.none
             }
         }
+        
+    
         
         return cell
     }
@@ -162,6 +172,12 @@ class CategoryTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath){
         print("Selected: row =\(indexPath.row), section=\(indexPath.section)\n")
         tableView.deselectRow(at: indexPath as IndexPath, animated: true)
+        
+        if (delegate != nil) {
+            performSegue(withIdentifier: "returnFromProductCategory", sender: self)
+        } else {
+            print("not returning")
+        }
 
         tableView.reloadData()
         
@@ -229,14 +245,56 @@ class CategoryTableViewController: UITableViewController {
     }
 
     
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
+        print("Segue triggered")
 
+              switch (segue.identifier ?? ""){
+         
+              case "goToCategoryDetail":
+                  let vc = segue.destination as! CategoryDetailViewController
+                  vc.delegate = self
+                  if let indexPath = tableView.indexPath(for: (sender as? UITableViewCell)!) {
+                      selectedCategory = categories[indexPath.row-1]
+                      vc.category = selectedCategory
+                  }
+              default:
+                  ()
+              }    }
+
+
+    
+    
+    /** See here ho to define unwind segue for auto-going back: https://developer.apple.com/library/archive/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html
+     */
+    @IBAction func unwindToCategoryScene(segue: UIStoryboardSegue) {
+        
+        switch (segue.identifier ?? ""){
+        case "returnFromCategoryDetail":
+            print("returnFromCategoryDetail")
+            if let category = selectedCategory
+            {
+                category.name = (segue.source as! CategoryDetailViewController).name.text
+                // save
+                do {
+                    try managedContext.save()
+                } catch let error as NSError {
+                    print("Could not save. \(error), \(error.userInfo)")
+                }
+                buildArrays()
+            }
+            tableView.reloadData()
+
+            
+            
+        default:
+            ()
+        }
+    
+    }
+    
+    
 }
