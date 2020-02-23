@@ -20,6 +20,7 @@
 		9AE3D99624005FA400AF9CD7 /* ProductDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE3D99524005FA400AF9CD7 /* ProductDetailViewController.swift */; };
 		9AE3D99824016BC100AF9CD7 /* CategoryDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE3D99724016BC100AF9CD7 /* CategoryDetailViewController.swift */; };
 		9AE3D99A2401A14C00AF9CD7 /* ShoppingListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE3D9992401A14C00AF9CD7 /* ShoppingListTableViewController.swift */; };
+		9AE3D99C2402853700AF9CD7 /* ShoppingListDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE3D99B2402853700AF9CD7 /* ShoppingListDetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,7 @@
 		9AE3D99524005FA400AF9CD7 /* ProductDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductDetailViewController.swift; sourceTree = "<group>"; };
 		9AE3D99724016BC100AF9CD7 /* CategoryDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryDetailViewController.swift; sourceTree = "<group>"; };
 		9AE3D9992401A14C00AF9CD7 /* ShoppingListTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListTableViewController.swift; sourceTree = "<group>"; };
+		9AE3D99B2402853700AF9CD7 /* ShoppingListDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListDetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +80,7 @@
 				9A25A79923F0A43F00E9200A /* SceneDelegate.swift */,
 				9A25A79B23F0A43F00E9200A /* TestViewController.swift */,
 				9AE3D9992401A14C00AF9CD7 /* ShoppingListTableViewController.swift */,
+				9AE3D99B2402853700AF9CD7 /* ShoppingListDetailViewController.swift */,
 				9ACEDC6523F9EE94008AFD6D /* ProductTableViewController.swift */,
 				9AE3D99524005FA400AF9CD7 /* ProductDetailViewController.swift */,
 				9A493B1323FC8C7E003E240D /* CategoryTableViewController.swift */,
@@ -177,6 +180,7 @@
 				9A25A7B023F0A4CE00E9200A /* Model.xcdatamodeld in Sources */,
 				9AE3D99A2401A14C00AF9CD7 /* ShoppingListTableViewController.swift in Sources */,
 				9A25A79A23F0A43F00E9200A /* SceneDelegate.swift in Sources */,
+				9AE3D99C2402853700AF9CD7 /* ShoppingListDetailViewController.swift in Sources */,
 				9ACEDC6623F9EE94008AFD6D /* ProductTableViewController.swift in Sources */,
 				9A493B1423FC8C7E003E240D /* CategoryTableViewController.swift in Sources */,
 			);

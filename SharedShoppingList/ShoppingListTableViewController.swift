@@ -15,12 +15,13 @@ class ShoppingListTableViewCell: UITableViewCell{
 }
 
 
-class ShoppingListTableViewController: UITableViewController {
+class ShoppingListTableViewController: UITableViewController,ShoppingListDetailViewControllerDelegate {
 
     var shoppingLists: [ShoppingList] = []
     var appDelegate: AppDelegate!
     var managedContext: NSManagedObjectContext!
 
+    var selectedList: ShoppingList?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -189,14 +190,57 @@ class ShoppingListTableViewController: UITableViewController {
         }
 }
 
-    /*
+    
     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
+      override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+          print("Segue triggered")
 
+          switch (segue.identifier ?? ""){
+          case "goToShoppingList":
+            ()
+          case "goToShoppingListDetail":
+              let vc = segue.destination as! ShoppingListDetailViewController
+              vc.delegate = self
+              if let indexPath = tableView.indexPath(for: (sender as? UITableViewCell)!) {
+                  selectedList = shoppingLists[indexPath.row]
+                  vc.list = selectedList
+              }
+          default:
+              ()
+          }
+      }
+      
+      
+    
+    /** See here ho to define unwind segue for auto-going back: https://developer.apple.com/library/archive/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html
+     */
+    @IBAction func unwindToShoppingListScene(segue: UIStoryboardSegue) {
+        
+        switch (segue.identifier ?? ""){
+        case "returnFromShoppingListDetail":
+            print("returnFromShoppingListDetail")
+            if let list = selectedList
+            {
+                list.name = (segue.source as! ShoppingListDetailViewController).name.text
+                // save
+                do {
+                    try managedContext.save()
+                } catch let error as NSError {
+                    print("Could not save. \(error), \(error.userInfo)")
+                }
+                buildArrays()
+            }
+            tableView.reloadData()
+
+            
+            
+        case "returnFromProductCategory":
+            print("returnFromProductCategory")
+            // this is triggered before the selection is triggered
+        default:
+            ()
+        }
+    
+    }
 }
