@@ -21,7 +21,7 @@
         <attribute name="picture" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData"/>
         <attribute name="url" optional="YES" attributeType="URI"/>
         <relationship name="belongsToCategory" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ProductCategory" inverseName="isCategoryOfProduct" inverseEntity="ProductCategory"/>
-        <relationship name="hasItems" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Item" inverseName="product" inverseEntity="Item"/>
+        <relationship name="hasItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Item" inverseName="product" inverseEntity="Item"/>
         <relationship name="hasLocations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Location" inverseName="isLocationOfItems" inverseEntity="Location"/>
         <relationship name="hasUnits" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Unit" inverseName="isUnitOfProduct" inverseEntity="Unit"/>
     </entity>

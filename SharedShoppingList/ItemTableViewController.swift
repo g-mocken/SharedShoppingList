@@ -17,34 +17,48 @@ class ItemTableViewCell: UITableViewCell{
     
 }
 
-class ItemTableViewController: UITableViewController {
+class ItemTableViewController: UITableViewController, NSFetchedResultsControllerDelegate {
 
     var appDelegate: AppDelegate!
     var managedContext: NSManagedObjectContext!
 
-    var items: [Item] = []
-
     var list: ShoppingList?
     
-     fileprivate func buildArrays() {
-         
-         let fetchRequest =
-             NSFetchRequest<Item>(entityName: "Item")
-         fetchRequest.predicate = NSPredicate(format: "isItemOfList == %@", list!)
-         
+ /** See: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/CoreData/nsfetchedresultscontroller.html#//apple_ref/doc/uid/TP40001075-CH8-SW1
+ */
+    var fetchedResultsController: NSFetchedResultsController<Item>!
+   
 
+    
+    fileprivate func initializeFetchedResultsController() {
         
-         do {
-             items = try managedContext.fetch(fetchRequest)
-             // products.sort(by: {a,b in return a.name! < b.name!}) // wrong sorting of umlauts etc.
-            items.sort { $0.product!.name!.localizedCaseInsensitiveCompare($1.product!.name!) == ComparisonResult.orderedAscending }
-             
-         } catch let error as NSError {
-             print("Could not fetch. \(error), \(error.userInfo)")
-         }
-     }
+        let fetchRequest = NSFetchRequest<Item>(entityName: "Item")
+        // Configure the request's entity, and optionally its predicate
+        
+        fetchRequest.predicate = NSPredicate(format: "isItemOfList == %@", list!)
+
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "product.name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare))]
+        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: managedContext, sectionNameKeyPath: nil, cacheName: nil)
+        
+        fetchedResultsController.delegate = self
+
+        do {
+            try fetchedResultsController.performFetch()
+        } catch {
+            fatalError("Failed to fetch entities: \(error)")
+        }
+    }
     
-    
+
+    fileprivate func save() {
+        // save
+        do {
+            try managedContext.save()
+        } catch let error as NSError {
+            print("Could not save. \(error), \(error.userInfo)")
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -57,16 +71,12 @@ class ItemTableViewController: UITableViewController {
         appDelegate = UIApplication.shared.delegate as? AppDelegate
         managedContext = appDelegate.persistentContainer.viewContext
 
+        initializeFetchedResultsController()
     }
     
     override func viewWillAppear(_ animated: Bool) {
           super.viewWillAppear(animated)
-              
-        buildArrays()
-        tableView.reloadData()
-
-      
-        
+                      
     }
 
 
@@ -74,19 +84,23 @@ class ItemTableViewController: UITableViewController {
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 1
+        //print ("\(fetchedResultsController.sections!.count) sections")
+        return fetchedResultsController.sections!.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return items.count
+        let sections = fetchedResultsController.sections
+        let sectionInfo = sections![section]
+        //print ("\(sectionInfo.numberOfObjects) objects in section \(section)")
+        return sectionInfo.numberOfObjects
     }
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "itemCell", for: indexPath) as! ItemTableViewCell
 
-        let item = items[indexPath.row]
+        let item = fetchedResultsController.object(at: indexPath)
 
         cell.title.text =  item.product!.name
         cell.amount.text =  String(format: "%d", item.multiplier)
@@ -108,19 +122,9 @@ class ItemTableViewController: UITableViewController {
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-                let itemToDelete = items[indexPath.row]
+                let itemToDelete = fetchedResultsController.object(at: indexPath)
                 managedContext.delete(itemToDelete)
-                
-                // save
-                do {
-                    try managedContext.save()
-                    items.remove(at: indexPath.row)
-                } catch let error as NSError {
-                    print("Could not save. \(error), \(error.userInfo)")
-                }
-
-                // Delete the row from the data source
-                tableView.deleteRows(at: [indexPath], with: .fade)
+                save()
             
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
@@ -143,6 +147,45 @@ class ItemTableViewController: UITableViewController {
     }
     */
 
+    
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        tableView.beginUpdates()
+    }
+     
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
+        switch type {
+        case .insert:
+            tableView.insertSections(IndexSet(integer: sectionIndex), with: .fade)
+        case .delete:
+            tableView.deleteSections(IndexSet(integer: sectionIndex), with: .fade)
+        case .move:
+            break
+        case .update:
+            break
+        @unknown default:
+            fatalError()
+        }
+    }
+     
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        switch type {
+        case .insert:
+            tableView.insertRows(at: [newIndexPath!], with: .fade)
+        case .delete:
+            tableView.deleteRows(at: [indexPath!], with: .fade)
+        case .update:
+            tableView.reloadRows(at: [indexPath!], with: .fade)
+        case .move:
+            tableView.moveRow(at: indexPath!, to: newIndexPath!)
+        @unknown default:
+            fatalError()
+        }
+    }
+     
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        tableView.endUpdates()
+    }
+    
     /*
     // MARK: - Navigation
 
@@ -153,6 +196,8 @@ class ItemTableViewController: UITableViewController {
     }
     */
 
+
+    
     @IBAction func unwindToItemScene(segue: UIStoryboardSegue) {
         
         switch (segue.identifier ?? ""){
@@ -165,24 +210,7 @@ class ItemTableViewController: UITableViewController {
                 newItem.product = selectedProduct
                 newItem.multiplier = 1
                 list?.addToHasItems(newItem )
-
-                
-                // save
-                do {
-                    try self.managedContext.save()
-                    self.items.append(newItem)
-                    self.items.sort { $0.product!.name!.localizedCaseInsensitiveCompare($1.product!.name!) == ComparisonResult.orderedAscending }
-                    
-                } catch let error as NSError {
-                    print("Could not save. \(error), \(error.userInfo)")
-                }
-                
-                
-                
-                buildArrays()
-                tableView.reloadData()
-                
-               
+                save()
             }
         default:
             ()
