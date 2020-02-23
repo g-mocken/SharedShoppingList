@@ -197,8 +197,12 @@ class ShoppingListTableViewController: UITableViewController,ShoppingListDetailV
           print("Segue triggered")
 
           switch (segue.identifier ?? ""){
-          case "goToShoppingList":
-            ()
+          case "goToItem":
+            let vc = segue.destination as! ItemTableViewController
+            if let indexPath = tableView.indexPath(for: (sender as? UITableViewCell)!) {
+                selectedList = shoppingLists[indexPath.row]
+                vc.list = selectedList
+            }
           case "goToShoppingListDetail":
               let vc = segue.destination as! ShoppingListDetailViewController
               vc.delegate = self
