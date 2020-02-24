@@ -140,7 +140,7 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
             // save
             do {
                 try managedContext.save()
-                categories.remove(at: indexPath.row)
+                categories.remove(at: indexPath.row-1)
             } catch let error as NSError {
                 print("Could not save. \(error), \(error.userInfo)")
             }
