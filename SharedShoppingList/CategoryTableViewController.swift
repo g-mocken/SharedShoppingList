@@ -16,7 +16,7 @@ class CategoryTableViewCell: UITableViewCell{
 
 protocol CategoryTableViewControllerDelegate: AnyObject {
     func assignCategoryToSelectedProduct(category:ProductCategory?)->Void
-    func updateCategories()
+  //  func updateCategories()
 }
 
 
@@ -239,7 +239,7 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
             
             print("Did save")
             self.tableView.reloadData()
-            self.delegate?.updateCategories()
+           // self.delegate?.updateCategories()
         }
         
     }

@@ -9,24 +9,45 @@
 import UIKit
 import CoreData
 
+/** Set transient property "categoryName" and use it instead of key path "belongsToCategory.name" https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/CoreData/LifeofaManagedObject.html
+    https://stackoverflow.com/questions/25960555/coredata-swift-and-transient-attribute-getters/55080048#55080048
+ 
+ */
+extension Product {
+    public override func awakeFromFetch() {
+        super.awakeFromFetch()
+        if belongsToCategory != nil {
+            categoryName = belongsToCategory?.name
+        } else {
+            categoryName = "empty" // works for initial fetch, but scetion is not updated again
+        }
+    }
+}
+
+
 
 class ProductTableViewCell: UITableViewCell{
     @IBOutlet var title: UILabel!
 }
 
-class ProductTableViewController: UITableViewController, CategoryTableViewControllerDelegate, ProductDetailViewControllerDelegate {
+class ProductTableViewController: UITableViewController, CategoryTableViewControllerDelegate, ProductDetailViewControllerDelegate, NSFetchedResultsControllerDelegate {
   
+//    
+//    func updateCategories() {
+//        buildArrays()
+//    }
+//    
     
-    func updateCategories() {
-        buildArrays()
-    }
-    
-    
-    var categories: [ProductCategory] = []
-    var productsInSections: [[Product]] = [[]]
-    
+//    var categories: [ProductCategory] = []
+//    var productsInSections: [[Product]] = [[]]
+//
     var appDelegate: AppDelegate!
     var managedContext: NSManagedObjectContext!
+   
+    /** See: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/CoreData/nsfetchedresultscontroller.html#//apple_ref/doc/uid/TP40001075-CH8-SW1
+    */
+    var fetchedResultsController: NSFetchedResultsController<Product>!
+
     
     var selectedProduct: Product?
     
@@ -42,8 +63,39 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
         appDelegate = UIApplication.shared.delegate as? AppDelegate
         managedContext = appDelegate.persistentContainer.viewContext
 
+        initializeFetchedResultsController()
+
     }
     
+    
+    fileprivate func save() {
+        // save
+        do {
+            try managedContext.save()
+        } catch let error as NSError {
+            print("Could not save. \(error), \(error.userInfo)")
+        }
+    }
+    fileprivate func initializeFetchedResultsController() {
+        
+        let fetchRequest = NSFetchRequest<Product>(entityName: "Product")
+        // Configure the request's entity, and optionally its predicate
+        
+        //fetchRequest.predicate = NSPredicate(format: "isItemOfList == %@", list!)
+
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "belongsToCategory.name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare)), NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare))]
+        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: managedContext, sectionNameKeyPath:  "belongsToCategory.name", cacheName: nil)
+        
+        fetchedResultsController.delegate = self
+
+        do {
+            try fetchedResultsController.performFetch()
+        } catch {
+            fatalError("Failed to fetch entities: \(error)")
+        }
+    }
+    
+    /*
     
     fileprivate func buildArrays() {
         let fetchRequest1 =
@@ -86,11 +138,12 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
             }
         }
     }
+    */
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        buildArrays()
-        tableView.reloadData()
+//        buildArrays()
+//        tableView.reloadData()
 
     }
     
@@ -99,19 +152,27 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
     
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return categories.count + 1
+        
+        return fetchedResultsController.sections!.count
+
+//        return categories.count + 1
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-     
-        return productsInSections[section].count
+        let sections = fetchedResultsController.sections
+        let sectionInfo = sections![section]
+        //print ("\(sectionInfo.numberOfObjects) objects in section \(section)")
+        return sectionInfo.numberOfObjects
+        
+        //        return productsInSections[section].count
     }
     
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "productCell", for: indexPath) as! ProductTableViewCell
-        
-        let  product = productsInSections[indexPath.section][indexPath.row]
+        let product = fetchedResultsController.object(at: indexPath)
+
+       // let  product = productsInSections[indexPath.section][indexPath.row]
 
         // Configure the cell...
         cell.title.text = product.name
@@ -120,12 +181,58 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == 0 { // special "unknown category"
-            return NSLocalizedString("Uncategorized", comment: "")
-        } else {
-            return categories[section-1].name
-        }
+        let sections = fetchedResultsController.sections
+        let sectionInfo = sections![section]
+
+        return sectionInfo.name != "" ? sectionInfo.name : "Uncategorized"
+        
+        //        if section == 0 { // special "unknown category"
+//            return NSLocalizedString("Uncategorized", comment: "")
+//        } else {
+//            return categories[section-1].name
+//        }
     }
+    
+    
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+          tableView.beginUpdates()
+      }
+       
+      func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
+          switch type {
+          case .insert:
+              tableView.insertSections(IndexSet(integer: sectionIndex), with: .fade)
+          case .delete:
+              tableView.deleteSections(IndexSet(integer: sectionIndex), with: .fade)
+          case .move:
+              break
+          case .update:
+              break
+          @unknown default:
+              fatalError()
+          }
+      }
+       
+      func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+          switch type {
+          case .insert:
+              tableView.insertRows(at: [newIndexPath!], with: .fade)
+          case .delete:
+              tableView.deleteRows(at: [indexPath!], with: .fade)
+          case .update:
+              tableView.reloadRows(at: [indexPath!], with: .fade)
+          case .move:
+              tableView.moveRow(at: indexPath!, to: newIndexPath!)
+          @unknown default:
+              fatalError()
+          }
+      }
+       
+      func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+          tableView.endUpdates()
+      }
+      
+    
     
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -139,20 +246,24 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
       
         if editingStyle == .delete {
-            let productToDelete = productsInSections[indexPath.section][indexPath.row]
-
+            let productToDelete = fetchedResultsController.object(at: indexPath)
             managedContext.delete(productToDelete)
-            
-            // save
-            do {
-                try managedContext.save()
-                productsInSections[indexPath.section].remove(at: indexPath.row)
-            } catch let error as NSError {
-                print("Could not save. \(error), \(error.userInfo)")
-            }
+            save()
 
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
+//            let productToDelete = productsInSections[indexPath.section][indexPath.row]
+//
+//            managedContext.delete(productToDelete)
+//            
+//            // save
+//            do {
+//                try managedContext.save()
+//                productsInSections[indexPath.section].remove(at: indexPath.row)
+//            } catch let error as NSError {
+//                print("Could not save. \(error), \(error.userInfo)")
+//            }
+//
+//            // Delete the row from the data source
+//            tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
         }    
@@ -187,14 +298,16 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
             let vc = segue.destination as! CategoryTableViewController
             vc.delegate = self
             if let indexPath = tableView.indexPathForSelectedRow {
-                selectedProduct = productsInSections[indexPath.section][indexPath.row]
+                selectedProduct = fetchedResultsController.object(at: indexPath)
+                //selectedProduct = productsInSections[indexPath.section][indexPath.row]
                 vc.selectedCategory = selectedProduct?.belongsToCategory
             }
         case "goToProductDetail":
             let vc = segue.destination as! ProductDetailViewController
             vc.delegate = self
             if let indexPath = tableView.indexPath(for: (sender as? UITableViewCell)!) {
-                selectedProduct = productsInSections[indexPath.section][indexPath.row]
+                selectedProduct = fetchedResultsController.object(at: indexPath)
+                //selectedProduct = productsInSections[indexPath.section][indexPath.row]
                 vc.product = selectedProduct
             }
         default:
@@ -219,10 +332,10 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
             } catch let error as NSError {
                 print("Could not save. \(error), \(error.userInfo)")
             }
-            buildArrays()
+         //   buildArrays()
             
         }
-        tableView.reloadData()
+       // tableView.reloadData()
     }
     
     
@@ -237,15 +350,21 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
             if let product = selectedProduct
             {
                 product.name = (segue.source as! ProductDetailViewController).name.text
-                // save
-                do {
-                    try managedContext.save()
-                } catch let error as NSError {
-                    print("Could not save. \(error), \(error.userInfo)")
-                }
-                buildArrays()
+               
+                save()
+                
+                
+            
+                
+//                // save
+//                do {
+//                    try managedContext.save()
+//                } catch let error as NSError {
+//                    print("Could not save. \(error), \(error.userInfo)")
+//                }
+//                buildArrays()
             }
-            tableView.reloadData()
+        //    tableView.reloadData()
 
             
             
@@ -255,7 +374,7 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
         default:
             ()
         }
-    
+
     }
     
     
@@ -293,19 +412,22 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
             product.name = name // no need to use KVC! class is auto-generated
             product.belongsToCategory = nil //self.categories[0] // for testing, assign fixed category
             print ("New = \(name)")
+       
             
-            // save
-            do {
-                try self.managedContext.save()
-                self.productsInSections[0].append(product)
-                self.productsInSections[0].sort { $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending }
-
-            } catch let error as NSError {
-                print("Could not save. \(error), \(error.userInfo)")
-            }
+            self.save()
             
-            print("Did save")
-            self.tableView.reloadData()
+//            // save
+//            do {
+//                try self.managedContext.save()
+//                self.productsInSections[0].append(product)
+//                self.productsInSections[0].sort { $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending }
+//
+//            } catch let error as NSError {
+//                print("Could not save. \(error), \(error.userInfo)")
+//            }
+//
+//            print("Did save")
+//            self.tableView.reloadData()
         }
         
     }
