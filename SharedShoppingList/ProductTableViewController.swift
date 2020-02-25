@@ -9,21 +9,17 @@
 import UIKit
 import CoreData
 
-/** Set transient property "categoryName" and use it instead of key path "belongsToCategory.name" https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/CoreData/LifeofaManagedObject.html
-    https://stackoverflow.com/questions/25960555/coredata-swift-and-transient-attribute-getters/55080048#55080048
- 
- */
 extension Product {
-    public override func awakeFromFetch() {
-        super.awakeFromFetch()
-        if belongsToCategory != nil {
-            categoryName = belongsToCategory?.name
-        } else {
-            categoryName = "empty" // works for initial fetch, but scetion is not updated again
+    @objc var computedName:String { // @objc is crucial for making it KVC compliant!
+        get {
+            if belongsToCategory != nil {
+                return belongsToCategory!.name!
+            } else {
+                return "special"
+            }
         }
     }
 }
-
 
 
 class ProductTableViewCell: UITableViewCell{
@@ -84,7 +80,7 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
         //fetchRequest.predicate = NSPredicate(format: "isItemOfList == %@", list!)
 
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "belongsToCategory.name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare)), NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare))]
-        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: managedContext, sectionNameKeyPath:  "belongsToCategory.name", cacheName: nil)
+        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: managedContext, sectionNameKeyPath:  "computedName", cacheName: nil)
         
         fetchedResultsController.delegate = self
 
@@ -93,6 +89,7 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
         } catch {
             fatalError("Failed to fetch entities: \(error)")
         }
+        
     }
     
     /*
