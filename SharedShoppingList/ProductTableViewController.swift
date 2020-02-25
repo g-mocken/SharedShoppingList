@@ -21,6 +21,11 @@ extension Product {
                 return uncategorized
             }
         }
+        set(name) {
+            if belongsToCategory != nil {
+                belongsToCategory!.name = name
+            }
+        }
     }
 }
 
@@ -40,30 +45,16 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
 
     
     var selectedProduct: Product?
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-        
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        self.navigationItem.rightBarButtonItem = self.editButtonItem
-        
-        appDelegate = UIApplication.shared.delegate as? AppDelegate
-        managedContext = appDelegate.persistentContainer.viewContext
-
-        initializeFetchedResultsController()
-
-    }
-    
+      
     
     fileprivate func save() {
         // save
-        do {
-            try managedContext.save()
-        } catch let error as NSError {
-            print("Could not save. \(error), \(error.userInfo)")
+        if managedContext.hasChanges {
+            do {
+                try managedContext.save()
+            } catch let error as NSError {
+                print("Could not save. \(error), \(error.userInfo)")
+            }
         }
     }
     fileprivate func initializeFetchedResultsController() {
@@ -87,13 +78,36 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
     }
     
 
+      override func viewDidLoad() {
+          super.viewDidLoad()
+          
+          // Uncomment the following line to preserve selection between presentations
+          // self.clearsSelectionOnViewWillAppear = false
+          
+          // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+          self.navigationItem.rightBarButtonItem = self.editButtonItem
+          
+          appDelegate = UIApplication.shared.delegate as? AppDelegate
+          managedContext = appDelegate.persistentContainer.viewContext
+          initializeFetchedResultsController()
+      }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
         save() // must be deferred until the view is visible, because it triggers table updates
+        
+        do {
+            try fetchedResultsController.performFetch()
+        } catch {
+            fatalError("Failed to fetch entities: \(error)")
+        }
+        if !tableView.hasUncommittedUpdates { tableView.reloadData() }
     }
     
     
@@ -116,14 +130,14 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
         let product = fetchedResultsController.object(at: indexPath)
         // Configure the cell...
         cell.title.text = product.name
-        
+        print ("updating \(indexPath)")
         return cell
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         let sections = fetchedResultsController.sections
         let sectionInfo = sections![section]
-
+        print ("Header = \(sectionInfo.name)")
         return sectionInfo.name
     }
     
@@ -155,16 +169,17 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
           case .update:
               tableView.reloadRows(at: [indexPath!], with: .fade)
           case .move:
-              tableView.moveRow(at: indexPath!, to: newIndexPath!)
+            tableView.moveRow(at: indexPath!, to: newIndexPath!)
           @unknown default:
               fatalError()
           }
       }
-       
-      func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-          tableView.endUpdates()
-      }
-      
+    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        tableView.endUpdates()
+        if !tableView.hasUncommittedUpdates { tableView.reloadData() }
+    }
+    
     
     
     // Override to support conditional editing of the table view.
@@ -217,14 +232,16 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
         if let cell = (sender as? UITableViewCell){
             if let indexPath = tableView.indexPath(for: cell) {
                 selectedProduct = fetchedResultsController.object(at: indexPath)
-                
                 switch (segue.identifier ?? ""){
                 case "goToCategory":
+                    print("goToCategory")
                     let vc = segue.destination as! CategoryTableViewController
                     vc.delegate = self
                     vc.selectedCategory = selectedProduct?.belongsToCategory
                     
                 case "goToProductDetail":
+                    print("goToProductDetail")
+
                     let vc = segue.destination as! ProductDetailViewController
                     vc.delegate = self
                     vc.product = selectedProduct
@@ -241,24 +258,29 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
     /** See here ho to define unwind segue for auto-going back: https://developer.apple.com/library/archive/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html
      */
     @IBAction func unwindToProductScene(segue: UIStoryboardSegue) {
-        if let product = selectedProduct{
             
             switch (segue.identifier ?? ""){
             case "returnFromProductDetail":
                 print("returnFromProductDetail")
-                product.name = (segue.source as! ProductDetailViewController).name.text
+                selectedProduct!.name = (segue.source as! ProductDetailViewController).name.text
+                print ("setting to \(selectedProduct!.name!)")
                 
             case "returnFromProductCategory":
                 print("returnFromProductCategory")
                 // If the unwind segue is connected to the category cell, it is triggered before the category cell "didSelect" code is run
                 let category = (segue.source as! CategoryTableViewController).selectedCategory
-                product.belongsToCategory = category
+                selectedProduct!.belongsToCategory = category
                 //print("Assigning category \(category?.name ?? "nil") to the selected product \(product.name ?? "nil")")
             
             default:
                 ()
             }
-        }
+            if self.viewIfLoaded?.window != nil {
+                // viewController is visible
+                save()
+                tableView.reloadData()
+            }
+        
     }
     
     

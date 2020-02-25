@@ -21,16 +21,18 @@ protocol CategoryTableViewControllerDelegate: AnyObject {
 
 
     
-class CategoryTableViewController: UITableViewController, CategoryDetailViewControllerDelegate {
+class CategoryTableViewController: UITableViewController, CategoryDetailViewControllerDelegate, NSFetchedResultsControllerDelegate {
 
     weak var delegate:CategoryTableViewControllerDelegate?
 
-    var selectedCategory: ProductCategory?
+    var selectedCategory: ProductCategory? // for checkmark
+    var currentCategory: ProductCategory? // the one being edited
+
     
-    
-    var categories: [ProductCategory] = []
     var appDelegate: AppDelegate!
     var managedContext: NSManagedObjectContext!
+
+    var fetchedResultsController: NSFetchedResultsController<ProductCategory>!
 
     
     override func viewDidLoad() {
@@ -43,7 +45,7 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
         self.navigationItem.rightBarButtonItem = self.editButtonItem
         appDelegate = UIApplication.shared.delegate as? AppDelegate
         managedContext = appDelegate.persistentContainer.viewContext
-
+        initializeFetchedResultsController()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -54,71 +56,150 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
         } else {
             print("category VC for editing")
             selectedCategory = nil
-            // TODO: cell selection -> edit name
         }
-        
-        buildArrays()
-        tableView.reloadData()
-
-      
         
     }
     
     
-    fileprivate func buildArrays() {
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        save() // must be deferred until the view is visible, because it triggers table updates
+        do {
+            try fetchedResultsController.performFetch()
+        } catch {
+            fatalError("Failed to fetch entities: \(error)")
+        }
+        if !tableView.hasUncommittedUpdates { tableView.reloadData() }
+
+    }
+    
+    
+    fileprivate func save() {
+        // save
+        do {
+            try managedContext.save()
+        } catch let error as NSError {
+            print("Could not save. \(error), \(error.userInfo)")
+        }
+    }
+    fileprivate func initializeFetchedResultsController() {
         
-        let fetchRequest =
-            NSFetchRequest<ProductCategory>(entityName: "ProductCategory")
+        let fetchRequest = NSFetchRequest<ProductCategory>(entityName: "ProductCategory")
+        // Configure the request's entity, and optionally its predicate
+        
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare))]
+        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: managedContext, sectionNameKeyPath: nil, cacheName: nil)
+        
+        fetchedResultsController.delegate = self
         
         do {
-            categories = try managedContext.fetch(fetchRequest)
-            // products.sort(by: {a,b in return a.name! < b.name!}) // wrong sorting of umlauts etc.
-            categories.sort { $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending }
-            
-        } catch let error as NSError {
-            print("Could not fetch. \(error), \(error.userInfo)")
+            try fetchedResultsController.performFetch()
+        } catch {
+            fatalError("Failed to fetch entities: \(error)")
         }
+        
     }
+    
+    
+    
     // MARK: - Table view data source
-
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 1
+        return fetchedResultsController.sections!.count
     }
-
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return categories.count + 1
+        
+        let sections = fetchedResultsController.sections
+        let sectionInfo = sections![section]
+        //print ("\(sectionInfo.numberOfObjects) objects in section \(section)")
+        return sectionInfo.numberOfObjects + 1 // +1 for no category at the top
+        
     }
-
+    
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        print ("updating \(indexPath)")
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCell", for: indexPath) as! CategoryTableViewCell
-
+        
         if indexPath.row == 0 {
             cell.title.text = uncategorized
-
+            
             if (selectedCategory == nil) && (delegate != nil){
                 cell.accessoryType = UITableViewCell.AccessoryType.checkmark
             } else {
                 cell.accessoryType = UITableViewCell.AccessoryType.none
             }
         } else {
-            let category = categories[indexPath.row-1]
+            let category = fetchedResultsController.object(at: IndexPath(row: indexPath.row-1, section: indexPath.section)) // -1 for no category at the top
+            
             cell.title.text = category.name
-            if (selectedCategory == categories[indexPath.row-1]) && (delegate != nil) {
+            if (selectedCategory == category) && (delegate != nil) {
                 cell.accessoryType = UITableViewCell.AccessoryType.checkmark
             } else {
                 cell.accessoryType = UITableViewCell.AccessoryType.none
             }
         }
         
-    
+        
         
         return cell
     }
     
-
+    
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        tableView.beginUpdates()
+    }
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
+        switch type {
+        case .insert:
+            tableView.insertSections(IndexSet(integer: sectionIndex), with: .fade)
+        case .delete:
+            tableView.deleteSections(IndexSet(integer: sectionIndex), with: .fade)
+        case .move:
+            break
+        case .update:
+            break
+        @unknown default:
+            fatalError()
+        }
+    }
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        
+        var indexPathShifted : IndexPath?
+        if (indexPath != nil){
+            indexPathShifted = IndexPath(row: indexPath!.row+1, section: indexPath!.section) // +1 for no category at the top
+        }
+        
+        var newIndexPathShifted : IndexPath?
+        if (newIndexPath != nil){
+            newIndexPathShifted = IndexPath(row: newIndexPath!.row+1, section: newIndexPath!.section) // +1 for no category at the top
+        }
+        switch type {
+        case .insert:
+            tableView.insertRows(at: [newIndexPathShifted!], with: .fade)
+        case .delete:
+            tableView.deleteRows(at: [indexPathShifted!], with: .fade)
+        case .update:
+            tableView.reloadRows(at: [indexPathShifted!], with: .fade)
+        case .move:
+            tableView.moveRow(at: indexPathShifted!, to: newIndexPathShifted!)
+        @unknown default:
+            fatalError()
+        }
+    }
+    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        tableView.endUpdates()
+        if !tableView.hasUncommittedUpdates { tableView.reloadData() }
+    }
+    
+    
     
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -132,20 +213,13 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             
-            let categoryToDelete = categories[indexPath.row-1]
-
-            managedContext.delete(categoryToDelete)
-            
-            // save
-            do {
-                try managedContext.save()
-                categories.remove(at: indexPath.row-1)
-            } catch let error as NSError {
-                print("Could not save. \(error), \(error.userInfo)")
+            let categoryToDelete = fetchedResultsController.object(at: IndexPath(row: indexPath.row-1, section: indexPath.section)) // -1 for no category at the top
+            if categoryToDelete == selectedCategory {
+                selectedCategory = nil
             }
+            managedContext.delete(categoryToDelete)
+            save()
 
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
         }
@@ -175,7 +249,8 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
         if indexPath.row == 0 {
             selectedCategory = nil
         } else {
-            selectedCategory = categories[indexPath.row-1]
+            selectedCategory = fetchedResultsController.object(at: IndexPath(row: indexPath.row-1, section: indexPath.section)) // -1 for no category at the top
+
         }
         
         // manually perform segue here, so we can suppress it when there is no parent table
@@ -186,7 +261,8 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
         }
         delegate = nil
         
-        tableView.reloadData() // update checkmark placement after the change in the database - not really needed, when leaving the view anyway
+        if !tableView.hasUncommittedUpdates { tableView.reloadData() }
+        // update checkmark placement after the change in the database - not really needed, when leaving the view anyway
     }
     
     
@@ -225,19 +301,7 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
             
             print ("New = \(name)")
             
-            // save
-            do {
-                try self.managedContext.save()
-                self.categories.append(category)
-                self.categories.sort { $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending }
-
-            } catch let error as NSError {
-                print("Could not save. \(error), \(error.userInfo)")
-            }
-            
-            print("Did save")
-            self.tableView.reloadData()
-           // self.delegate?.updateCategories()
+            self.save()
         }
         
     }
@@ -257,15 +321,17 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
             let vc = segue.destination as! CategoryDetailViewController
             vc.delegate = self
             if let indexPath = tableView.indexPath(for: (sender as? UITableViewCell)!) {
-                selectedCategory = categories[indexPath.row-1]
-                vc.category = selectedCategory
+                currentCategory = fetchedResultsController.object(at: IndexPath(row: indexPath.row-1, section: indexPath.section)) // -1 for no category at the top
+
+                vc.category = currentCategory
             }
         case "returnFromProductCategory":
             let _ = segue.destination as! ProductTableViewController
             
         default:
             ()
-        }    }
+        }
+    }
     
 
     
@@ -277,20 +343,7 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
         switch (segue.identifier ?? ""){
         case "returnFromCategoryDetail":
             print("returnFromCategoryDetail")
-            if let category = selectedCategory
-            {
-                category.name = (segue.source as! CategoryDetailViewController).name.text
-                // save
-                do {
-                    try managedContext.save()
-                } catch let error as NSError {
-                    print("Could not save. \(error), \(error.userInfo)")
-                }
-                buildArrays()
-            }
-            tableView.reloadData()
-
-            
+            currentCategory!.name = (segue.source as! CategoryDetailViewController).name.text
             
         default:
             ()
