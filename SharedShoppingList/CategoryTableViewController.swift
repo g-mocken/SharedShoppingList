@@ -15,8 +15,7 @@ class CategoryTableViewCell: UITableViewCell{
 }
 
 protocol CategoryTableViewControllerDelegate: AnyObject {
-    func assignCategoryToSelectedProduct(category:ProductCategory?)->Void
-  //  func updateCategories()
+
 }
 
 
@@ -97,7 +96,7 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
         let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCell", for: indexPath) as! CategoryTableViewCell
 
         if indexPath.row == 0 {
-            cell.title.text = NSLocalizedString("Uncategorized", comment: "")
+            cell.title.text = uncategorized
 
             if (selectedCategory == nil) && (delegate != nil){
                 cell.accessoryType = UITableViewCell.AccessoryType.checkmark
@@ -173,22 +172,21 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
         print("Selected: row =\(indexPath.row), section=\(indexPath.section)\n")
         tableView.deselectRow(at: indexPath as IndexPath, animated: true)
         
+        if indexPath.row == 0 {
+            selectedCategory = nil
+        } else {
+            selectedCategory = categories[indexPath.row-1]
+        }
+        
+        // manually perform segue here, so we can suppress it when there is no parent table
         if (delegate != nil) {
             performSegue(withIdentifier: "returnFromProductCategory", sender: self)
         } else {
             print("not returning")
         }
-
-        tableView.reloadData()
-        
-        if indexPath.row == 0 {
-            delegate?.assignCategoryToSelectedProduct(category:nil)
-            selectedCategory = nil
-        } else {
-            selectedCategory = categories[indexPath.row-1]
-            delegate?.assignCategoryToSelectedProduct(category:selectedCategory)
-        }
         delegate = nil
+        
+        tableView.reloadData() // update checkmark placement after the change in the database - not really needed, when leaving the view anyway
     }
     
     
@@ -251,20 +249,24 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         print("Segue triggered")
+       // print("sender: \(sender)") // cell for direct connection, or tableViewcontroller for manual performSegue
 
-              switch (segue.identifier ?? ""){
-         
-              case "goToCategoryDetail":
-                  let vc = segue.destination as! CategoryDetailViewController
-                  vc.delegate = self
-                  if let indexPath = tableView.indexPath(for: (sender as? UITableViewCell)!) {
-                      selectedCategory = categories[indexPath.row-1]
-                      vc.category = selectedCategory
-                  }
-              default:
-                  ()
-              }    }
-
+        switch (segue.identifier ?? ""){
+            
+        case "goToCategoryDetail":
+            let vc = segue.destination as! CategoryDetailViewController
+            vc.delegate = self
+            if let indexPath = tableView.indexPath(for: (sender as? UITableViewCell)!) {
+                selectedCategory = categories[indexPath.row-1]
+                vc.category = selectedCategory
+            }
+        case "returnFromProductCategory":
+            let _ = segue.destination as! ProductTableViewController
+            
+        default:
+            ()
+        }    }
+    
 
     
     
