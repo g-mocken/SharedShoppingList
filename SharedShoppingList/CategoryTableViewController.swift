@@ -63,14 +63,6 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        save() // must be deferred until the view is visible, because it triggers table updates
-        do {
-            try fetchedResultsController.performFetch()
-        } catch {
-            fatalError("Failed to fetch entities: \(error)")
-        }
-        if !tableView.hasUncommittedUpdates { tableView.reloadData() }
-
     }
     
     
@@ -336,20 +328,52 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
 
     
     
+    
+    
+}
+
+
+class CategorySelectionTableViewController: CategoryTableViewController{
+    
     /** See here ho to define unwind segue for auto-going back: https://developer.apple.com/library/archive/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html
      */
-    @IBAction func unwindToCategoryScene(segue: UIStoryboardSegue) {
+    @IBAction func unwindToCategorySelectionScene(segue: UIStoryboardSegue) {
         
         switch (segue.identifier ?? ""){
-        case "returnFromCategoryDetail":
-            print("returnFromCategoryDetail")
-            currentCategory!.name = (segue.source as! CategoryDetailViewController).name.text
-            
+        case "returnFromCategoryDetailToSelection":
+            print("returnFromCategoryDetailToSelection")
+            print("from: \(segue.source)")
+            print("to: \(segue.destination)")
+            currentCategory?.name = (segue.source as! CategoryDetailViewController).name.text
+            NotificationCenter.default.post(name: Notification.Name("categoriesUpdated"), object: nil)
+            save()
         default:
             ()
         }
     
     }
+}
+
+
+
+class CategoryEditorTableViewController: CategoryTableViewController{
     
+    /** See here ho to define unwind segue for auto-going back: https://developer.apple.com/library/archive/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html
+     */
+    @IBAction func unwindToCategoryEditorScene(segue: UIStoryboardSegue) {
+        
+        switch (segue.identifier ?? ""){
+        case "returnFromCategoryDetailToEditor":
+            print("returnFromCategoryDetailToEditor")
+            print("from: \(segue.source)")
+            print("to: \(segue.destination)")
+            currentCategory?.name = (segue.source as! CategoryDetailViewController).name.text
+            NotificationCenter.default.post(name: Notification.Name("categoriesUpdated"), object: nil)
+            save()
+        default:
+            ()
+        }
+    
+    }
     
 }

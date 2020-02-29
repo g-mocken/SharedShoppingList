@@ -64,14 +64,14 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="productCell" editingAccessoryType="detailButton" id="Y2l-r8-8Xl" customClass="ProductTableViewCell" customModule="SharedShoppingList" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="320" height="43.5"/>
+                                <rect key="frame" x="0.0" y="28" width="320" height="43"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Y2l-r8-8Xl" id="DYe-c3-TgR">
-                                    <rect key="frame" x="0.0" y="0.0" width="293" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="293" height="43"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Product Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="37U-oT-99q">
-                                            <rect key="frame" x="16" y="11" width="269" height="21.5"/>
+                                            <rect key="frame" x="16" y="11" width="269" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -86,8 +86,8 @@
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="title" destination="37U-oT-99q" id="sD5-mi-NEJ"/>
-                                    <segue destination="ngb-FL-44d" kind="show" identifier="goToCategory" id="tX7-tV-Fqm"/>
                                     <segue destination="CDR-hH-lYX" kind="showDetail" identifier="goToProductDetail" trigger="accessoryAction" id="YMn-hD-ncT"/>
+                                    <segue destination="Bea-Wc-wlw" kind="show" identifier="goToCategory" id="n1C-6o-pwP"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -178,7 +178,7 @@
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                 <state key="normal" title="Done"/>
                                 <connections>
-                                    <segue destination="aDp-pn-a2P" kind="unwind" identifier="returnFromCategoryDetail" unwindAction="unwindToCategorySceneWithSegue:" id="Ulo-R9-RfG"/>
+                                    <segue destination="aDp-pn-a2P" kind="unwind" identifier="returnFromCategoryDetailToEditor" unwindAction="unwindToCategoryEditorSceneWithSegue:" id="u5r-HQ-ABi"/>
                                 </connections>
                             </button>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="Category Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="vja-3g-VFJ">
@@ -253,10 +253,10 @@
             </objects>
             <point key="canvasLocation" x="1126.875" y="742.6056338028169"/>
         </scene>
-        <!--CategoryTableViewController-->
+        <!--CategoryEditorTableViewController-->
         <scene sceneID="ARI-vp-2ir">
             <objects>
-                <tableViewController id="ngb-FL-44d" userLabel="CategoryTableViewController" customClass="CategoryTableViewController" customModule="SharedShoppingList" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="ngb-FL-44d" userLabel="CategoryEditorTableViewController" customClass="CategoryEditorTableViewController" customModule="SharedShoppingList" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="Lap-iO-AFX">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -269,7 +269,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Product Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="asf-ty-Xvt" userLabel="Title">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Category Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="asf-ty-Xvt" userLabel="Title">
                                             <rect key="frame" x="16" y="11" width="288" height="21.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
@@ -301,7 +301,7 @@
                             </connections>
                         </barButtonItem>
                     </toolbarItems>
-                    <navigationItem key="navigationItem" title="Categories" id="CBd-ys-nZh"/>
+                    <navigationItem key="navigationItem" title="Categories Editor" id="CBd-ys-nZh"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <segue destination="tO2-Fs-HZv" kind="unwind" identifier="returnFromProductCategory" unwindAction="unwindToProductSceneWithSegue:" id="QkV-f4-dKa"/>
@@ -311,6 +311,114 @@
                 <exit id="tO2-Fs-HZv" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="2124" y="1532"/>
+        </scene>
+        <!--CategorySelectionTableViewController-->
+        <scene sceneID="rgY-5k-gPl">
+            <objects>
+                <tableViewController id="Bea-Wc-wlw" userLabel="CategorySelectionTableViewController" customClass="CategorySelectionTableViewController" customModule="SharedShoppingList" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="aVV-tE-965">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="categoryCell" editingAccessoryType="detailButton" id="Sjq-UA-Vd8" customClass="CategoryTableViewCell" customModule="SharedShoppingList" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="320" height="43.5"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Sjq-UA-Vd8" id="BwD-Y4-IPc">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Category Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0oR-Qa-BUZ" userLabel="Title">
+                                            <rect key="frame" x="16" y="11" width="288" height="21.5"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="0oR-Qa-BUZ" firstAttribute="top" secondItem="BwD-Y4-IPc" secondAttribute="topMargin" id="6c8-kN-FrH"/>
+                                        <constraint firstItem="0oR-Qa-BUZ" firstAttribute="bottom" secondItem="BwD-Y4-IPc" secondAttribute="bottomMargin" id="TLw-tF-Att"/>
+                                        <constraint firstItem="0oR-Qa-BUZ" firstAttribute="trailing" secondItem="BwD-Y4-IPc" secondAttribute="trailingMargin" id="XLd-Iq-Eap"/>
+                                        <constraint firstItem="0oR-Qa-BUZ" firstAttribute="leading" secondItem="BwD-Y4-IPc" secondAttribute="leadingMargin" id="ws7-cE-aaE"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="title" destination="0oR-Qa-BUZ" id="Oxg-pL-lAJ"/>
+                                    <segue destination="AVw-xl-e4m" kind="showDetail" identifier="goToCategoryDetail" trigger="accessoryAction" id="JWX-Zz-mLx"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="Bea-Wc-wlw" id="k7Q-fD-Ne0"/>
+                            <outlet property="delegate" destination="Bea-Wc-wlw" id="rLK-fg-hoJ"/>
+                        </connections>
+                    </tableView>
+                    <toolbarItems>
+                        <barButtonItem systemItem="add" id="cL6-Sc-4Lz">
+                            <connections>
+                                <action selector="addListItem:" destination="Bea-Wc-wlw" id="Ugq-VI-ASm"/>
+                            </connections>
+                        </barButtonItem>
+                    </toolbarItems>
+                    <navigationItem key="navigationItem" title="Categories Selection" id="Tn0-tF-9gt"/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <segue destination="OU5-hX-DR0" kind="unwind" identifier="returnFromProductCategory" unwindAction="unwindToProductSceneWithSegue:" id="fa2-jR-8Kf"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Kdk-2h-87M" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="OU5-hX-DR0" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="2124" y="12"/>
+        </scene>
+        <!--CategoryDetailViewController-->
+        <scene sceneID="96N-Q8-M7U">
+            <objects>
+                <viewController id="AVw-xl-e4m" userLabel="CategoryDetailViewController" customClass="CategoryDetailViewController" customModule="SharedShoppingList" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Xjd-XJ-m6c">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="548"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Category Details" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kKR-3l-Inm">
+                                <rect key="frame" x="81.5" y="20" width="157.5" height="24"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wp7-qw-bk1">
+                                <rect key="frame" x="259" y="20" width="45" height="34"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                <state key="normal" title="Done"/>
+                                <connections>
+                                    <segue destination="Dco-ui-dq4" kind="unwind" identifier="returnFromCategoryDetailToSelection" unwindAction="unwindToCategorySelectionSceneWithSegue:" id="34g-ZO-D9w"/>
+                                </connections>
+                            </button>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="Category Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="wVQ-a4-8fV">
+                                <rect key="frame" x="78" y="109" width="164.5" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="wVQ-a4-8fV" firstAttribute="top" secondItem="kKR-3l-Inm" secondAttribute="bottom" constant="65" id="1k7-HY-Ucn"/>
+                            <constraint firstItem="wp7-qw-bk1" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="QVw-V3-LvN" secondAttribute="leading" constant="1" id="3Fj-Wv-20D"/>
+                            <constraint firstItem="kKR-3l-Inm" firstAttribute="top" secondItem="wp7-qw-bk1" secondAttribute="top" id="914-QJ-KUV"/>
+                            <constraint firstItem="wVQ-a4-8fV" firstAttribute="centerX" secondItem="kKR-3l-Inm" secondAttribute="centerX" id="9Ib-5T-dtu"/>
+                            <constraint firstItem="kKR-3l-Inm" firstAttribute="centerX" secondItem="QVw-V3-LvN" secondAttribute="centerX" id="AQ5-iq-Xi4"/>
+                            <constraint firstItem="wp7-qw-bk1" firstAttribute="top" secondItem="QVw-V3-LvN" secondAttribute="top" constant="20" id="GPD-Me-Y1X"/>
+                            <constraint firstItem="wp7-qw-bk1" firstAttribute="trailing" secondItem="Xjd-XJ-m6c" secondAttribute="trailingMargin" id="HlW-N3-JQu"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="QVw-V3-LvN"/>
+                    </view>
+                    <connections>
+                        <outlet property="name" destination="wVQ-a4-8fV" id="Mrj-5m-ps4"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dMv-gn-dK9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="Dco-ui-dq4" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="3075" y="12"/>
         </scene>
         <!--CategoryNavagationController-->
         <scene sceneID="W8D-Br-YeZ">
@@ -345,14 +453,14 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="listCell" editingAccessoryType="detailButton" id="DoT-rq-pMO" customClass="ShoppingListTableViewCell" customModule="SharedShoppingList" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="320" height="43"/>
+                                <rect key="frame" x="0.0" y="28" width="320" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="DoT-rq-pMO" id="lRX-KK-zaP">
-                                    <rect key="frame" x="0.0" y="0.0" width="293" height="43"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="293" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="List Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k1y-NN-BUV" userLabel="Title">
-                                            <rect key="frame" x="16" y="11" width="269" height="21"/>
+                                            <rect key="frame" x="16" y="11" width="269" height="21.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -401,14 +509,14 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="itemCell" id="mNG-N4-fuF" customClass="ItemTableViewCell" customModule="SharedShoppingList" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="320" height="44.5"/>
+                                <rect key="frame" x="0.0" y="28" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="mNG-N4-fuF" id="Igp-Jh-oQN">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="44.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="123" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fyH-jf-OeT" userLabel="Amount">
-                                            <rect key="frame" x="16" y="11" width="30" height="21.5"/>
+                                            <rect key="frame" x="16" y="11" width="30" height="21"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="30" id="OWr-he-bmI"/>
                                             </constraints>
@@ -514,7 +622,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fIX-ze-8oC" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="Lrw-V8-p5k" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="2121" y="2890"/>
+            <point key="canvasLocation" x="2123" y="2988"/>
         </scene>
         <!--Product Selection Table View Controller-->
         <scene sceneID="fzM-cj-Qn0">
@@ -526,14 +634,14 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="productSelectionCell" id="oQk-zU-ePf" customClass="ProductSelectionTableViewCell" customModule="SharedShoppingList" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="320" height="43"/>
+                                <rect key="frame" x="0.0" y="28" width="320" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="oQk-zU-ePf" id="ffp-i4-Zmn">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Product Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r9T-x9-qNA">
-                                            <rect key="frame" x="16" y="11" width="288" height="21"/>
+                                            <rect key="frame" x="16" y="11" width="288" height="21.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -595,7 +703,4 @@
         <image name="hammer" catalog="system" width="64" height="56"/>
         <image name="list.dash" catalog="system" width="64" height="42"/>
     </resources>
-    <inferredMetricsTieBreakers>
-        <segue reference="tX7-tV-Fqm"/>
-    </inferredMetricsTieBreakers>
 </document>
