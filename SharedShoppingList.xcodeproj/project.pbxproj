@@ -23,6 +23,7 @@
 		9AE3D99C2402853700AF9CD7 /* ShoppingListDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE3D99B2402853700AF9CD7 /* ShoppingListDetailViewController.swift */; };
 		9AE3D99E24028E1000AF9CD7 /* ItemTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE3D99D24028E1000AF9CD7 /* ItemTableViewController.swift */; };
 		9AE3D9A02402B70800AF9CD7 /* ProductSelectionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE3D99F2402B70800AF9CD7 /* ProductSelectionTableViewController.swift */; };
+		9AE3D9B1240B03A400AF9CD7 /* ItemDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE3D9B0240B03A400AF9CD7 /* ItemDetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +46,7 @@
 		9AE3D99B2402853700AF9CD7 /* ShoppingListDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListDetailViewController.swift; sourceTree = "<group>"; };
 		9AE3D99D24028E1000AF9CD7 /* ItemTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemTableViewController.swift; sourceTree = "<group>"; };
 		9AE3D99F2402B70800AF9CD7 /* ProductSelectionTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductSelectionTableViewController.swift; sourceTree = "<group>"; };
+		9AE3D9B0240B03A400AF9CD7 /* ItemDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +93,7 @@
 				9A493B1323FC8C7E003E240D /* CategoryTableViewController.swift */,
 				9AE3D99724016BC100AF9CD7 /* CategoryDetailViewController.swift */,
 				9AE3D99D24028E1000AF9CD7 /* ItemTableViewController.swift */,
+				9AE3D9B0240B03A400AF9CD7 /* ItemDetailViewController.swift */,
 				9A25A7A323F0A44000E9200A /* Assets.xcassets */,
 				9A25A79D23F0A43F00E9200A /* Main.storyboard */,
 				9A25A7A523F0A44000E9200A /* LaunchScreen.storyboard */,
@@ -189,6 +192,7 @@
 				9AE3D99A2401A14C00AF9CD7 /* ShoppingListTableViewController.swift in Sources */,
 				9A25A79A23F0A43F00E9200A /* SceneDelegate.swift in Sources */,
 				9AE3D99C2402853700AF9CD7 /* ShoppingListDetailViewController.swift in Sources */,
+				9AE3D9B1240B03A400AF9CD7 /* ItemDetailViewController.swift in Sources */,
 				9ACEDC6623F9EE94008AFD6D /* ProductTableViewController.swift in Sources */,
 				9A493B1423FC8C7E003E240D /* CategoryTableViewController.swift in Sources */,
 			);

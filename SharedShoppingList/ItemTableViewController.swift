@@ -21,6 +21,7 @@ class ItemTableViewController: UITableViewController, NSFetchedResultsController
 
     var appDelegate: AppDelegate!
     var managedContext: NSManagedObjectContext!
+    var selectedItem: Item?
 
     var list: ShoppingList?
     
@@ -186,16 +187,29 @@ class ItemTableViewController: UITableViewController, NSFetchedResultsController
         tableView.endUpdates()
     }
     
-    /*
+    
     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+        print("Segue triggered")
+        if let cell = (sender as? UITableViewCell){
+            if let indexPath = tableView.indexPath(for: cell) {
+                selectedItem = fetchedResultsController.object(at: indexPath)
+                
+                switch (segue.identifier ?? ""){
+                case "goToItemDetail":
+                    let vc = segue.destination as! ItemDetailViewController
+                    vc.item = selectedItem
+                    
+                    
+                default:
+                    ()
+                }
+            }
+        }
     }
-    */
-
+    
+    
 
     
     @IBAction func unwindToItemScene(segue: UIStoryboardSegue) {
@@ -205,13 +219,16 @@ class ItemTableViewController: UITableViewController, NSFetchedResultsController
             print("returnFromProductSelection")
             
             if let selectedProduct = (segue.source as! ProductSelectionTableViewController).selectedProduct {
-                                
+                
                 let newItem = NSEntityDescription.insertNewObject(forEntityName: "Item", into: managedContext) as! Item
                 newItem.product = selectedProduct
                 newItem.multiplier = 1
                 list?.addToHasItems(newItem )
                 save()
             }
+        case "returnFromItemDetail":
+            print("returnFromItemDetail")
+            
         default:
             ()
         }
