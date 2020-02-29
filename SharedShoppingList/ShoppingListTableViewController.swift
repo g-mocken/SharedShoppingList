@@ -15,13 +15,44 @@ class ShoppingListTableViewCell: UITableViewCell{
 }
 
 
-class ShoppingListTableViewController: UITableViewController,ShoppingListDetailViewControllerDelegate {
+class ShoppingListTableViewController: UITableViewController,ShoppingListDetailViewControllerDelegate, NSFetchedResultsControllerDelegate {
 
-    var shoppingLists: [ShoppingList] = []
     var appDelegate: AppDelegate!
     var managedContext: NSManagedObjectContext!
+    var fetchedResultsController: NSFetchedResultsController<ShoppingList>!
 
     var selectedList: ShoppingList?
+    
+    fileprivate func save() {
+         // save
+         if managedContext.hasChanges {
+             do {
+                 try managedContext.save()
+             } catch let error as NSError {
+                 print("Could not save. \(error), \(error.userInfo)")
+             }
+         }
+     }
+     fileprivate func initializeFetchedResultsController() {
+         
+         let fetchRequest = NSFetchRequest<ShoppingList>(entityName: "ShoppingList")
+         // Configure the request's entity, and optionally its predicate
+         
+         //fetchRequest.predicate = NSPredicate(format: "isItemOfList == %@", list!)
+         
+         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare))]
+         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: managedContext, sectionNameKeyPath:  nil, cacheName: nil)
+         
+         fetchedResultsController.delegate = self
+         
+         do {
+             try fetchedResultsController.performFetch()
+         } catch {
+             fatalError("Failed to fetch entities: \(error)")
+         }
+         
+     }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,57 +65,98 @@ class ShoppingListTableViewController: UITableViewController,ShoppingListDetailV
         
         appDelegate = UIApplication.shared.delegate as? AppDelegate
         managedContext = appDelegate.persistentContainer.viewContext
+        initializeFetchedResultsController()
+
     }
 
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        buildArrays()
-        tableView.reloadData()
     }
 
     
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 1
+        return fetchedResultsController.sections!.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return shoppingLists.count
+        let sections = fetchedResultsController.sections
+               let sectionInfo = sections![section]
+               //print ("\(sectionInfo.numberOfObjects) objects in section \(section)")
+               return sectionInfo.numberOfObjects
     }
 
-    
-    fileprivate func buildArrays() {
-        
-        let fetchRequest =
-            NSFetchRequest<ShoppingList>(entityName: "ShoppingList")
-        
-        do {
-            shoppingLists = try managedContext.fetch(fetchRequest)
-            // products.sort(by: {a,b in return a.name! < b.name!}) // wrong sorting of umlauts etc.
-            shoppingLists.sort { $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending }
-            
-        } catch let error as NSError {
-            print("Could not fetch. \(error), \(error.userInfo)")
-        }
-    }
-    
     
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "listCell", for: indexPath) as! ShoppingListTableViewCell
 
-       
-        let  list = shoppingLists[indexPath.row]
+        let list = fetchedResultsController.object(at: indexPath)
         
         cell.title.text = list.name
         
         return cell
     }
     
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+          let sections = fetchedResultsController.sections
+          let sectionInfo = sections![section]
+          print ("Header = \(sectionInfo.name)")
+          return sectionInfo.name
+      }
+      
+      var pathsToUpdate:[IndexPath]?
+      
+      func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+          tableView.beginUpdates()
+          pathsToUpdate = Array()
+      }
+      
+      func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
+          switch type {
+          case .insert:
+              tableView.insertSections(IndexSet(integer: sectionIndex), with: .fade)
+          case .delete:
+              tableView.deleteSections(IndexSet(integer: sectionIndex), with: .fade)
+          case .move:
+              break
+          case .update:
+              break
+          @unknown default:
+              fatalError()
+          }
+      }
+      
+      
+      func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+          switch type {
+          case .insert:
+              tableView.insertRows(at: [newIndexPath!], with: .fade)
+          case .delete:
+              tableView.deleteRows(at: [indexPath!], with: .fade)
+          case .update:
+              tableView.reloadRows(at: [indexPath!], with: .fade)
+          case .move:
+              pathsToUpdate?.append(newIndexPath!) // save destination index path for deferred update
+              tableView.moveRow(at: indexPath!, to: newIndexPath!)
+          @unknown default:
+              fatalError()
+          }
+      }
+      
+      func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+          tableView.endUpdates()
+          
+          // perform deferred update
+          if let indexPaths = pathsToUpdate {
+              tableView.reloadRows(at: indexPaths, with: .fade)
+          }
+          pathsToUpdate=nil
+      }
+      
+
 
     /*
     // Override to support conditional editing of the table view.
@@ -99,20 +171,10 @@ class ShoppingListTableViewController: UITableViewController,ShoppingListDetailV
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
        
         if editingStyle == .delete {
-            let listToDelete = shoppingLists[indexPath.row]
-
+            let listToDelete = fetchedResultsController.object(at: indexPath)
             managedContext.delete(listToDelete)
-            
-            // save
-            do {
-                try managedContext.save()
-                shoppingLists.remove(at: indexPath.row)
-            } catch let error as NSError {
-                print("Could not save. \(error), \(error.userInfo)")
-            }
+            save()
 
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
         }
@@ -175,47 +237,37 @@ class ShoppingListTableViewController: UITableViewController,ShoppingListDetailV
             list.name = name // no need to use KVC! class is auto-generated
             print ("New = \(name)")
             
-            // save
-            do {
-                try self.managedContext.save()
-                self.shoppingLists.append(list)
-                self.shoppingLists.sort { $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending }
-
-            } catch let error as NSError {
-                print("Could not save. \(error), \(error.userInfo)")
-            }
-            
-            print("Did save")
-            self.tableView.reloadData()
+            self.save()
         }
 }
 
     
     // MARK: - Navigation
-
-      override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-          print("Segue triggered")
-
-          switch (segue.identifier ?? ""){
-          case "goToItem":
-            let vc = segue.destination as! ItemTableViewController
-            if let indexPath = tableView.indexPath(for: (sender as? UITableViewCell)!) {
-                selectedList = shoppingLists[indexPath.row]
-                vc.list = selectedList
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        print("Segue triggered")
+        if let cell = (sender as? UITableViewCell){
+            if let indexPath = tableView.indexPath(for: cell) {
+                selectedList = fetchedResultsController.object(at: indexPath)
+                
+                switch (segue.identifier ?? ""){
+                case "goToItem":
+                    let vc = segue.destination as! ItemTableViewController
+                    vc.list = selectedList
+                    
+                case "goToShoppingListDetail":
+                    let vc = segue.destination as! ShoppingListDetailViewController
+                    vc.delegate = self
+                    vc.list = selectedList
+                    
+                default:
+                    ()
+                }
             }
-          case "goToShoppingListDetail":
-              let vc = segue.destination as! ShoppingListDetailViewController
-              vc.delegate = self
-              if let indexPath = tableView.indexPath(for: (sender as? UITableViewCell)!) {
-                  selectedList = shoppingLists[indexPath.row]
-                  vc.list = selectedList
-              }
-          default:
-              ()
-          }
-      }
-      
-      
+        }
+    }
+    
+    
     
     /** See here ho to define unwind segue for auto-going back: https://developer.apple.com/library/archive/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html
      */
@@ -224,27 +276,16 @@ class ShoppingListTableViewController: UITableViewController,ShoppingListDetailV
         switch (segue.identifier ?? ""){
         case "returnFromShoppingListDetail":
             print("returnFromShoppingListDetail")
-            if let list = selectedList
-            {
+            if let list = selectedList {
                 list.name = (segue.source as! ShoppingListDetailViewController).name.text
-                // save
-                do {
-                    try managedContext.save()
-                } catch let error as NSError {
-                    print("Could not save. \(error), \(error.userInfo)")
-                }
-                buildArrays()
             }
-            tableView.reloadData()
-
-            
-            
-        case "returnFromProductCategory":
-            print("returnFromProductCategory")
-            // this is triggered before the selection is triggered
         default:
             ()
         }
+        
+        if self.viewIfLoaded?.window != nil { // if viewController is visible
+                save() // called for "returnFromShoppingListDetail"
+            }
     
     }
 }
