@@ -105,7 +105,7 @@ class ItemTableViewController: UITableViewController, NSFetchedResultsController
 
         cell.title.text =  item.product!.name
         cell.amount.text =  String(format: "%d", item.multiplier)
-        cell.unit.text =  "unit"
+        cell.unit.text = String(format: "%d", item.unit?.number ?? 1) + " " + (item.unit?.name ?? "unit")
 
         return cell
     }

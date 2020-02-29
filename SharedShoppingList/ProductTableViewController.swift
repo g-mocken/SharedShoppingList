@@ -361,7 +361,15 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
             let product = NSEntityDescription.insertNewObject(forEntityName: "Product", into: self.managedContext) as! Product
             product.name = name // no need to use KVC! class is auto-generated
             product.belongsToCategory = nil //self.categories[0] // for testing, assign fixed category
-            print ("New = \(name)")
+            print ("New product = \(name)")
+            
+            let unit = NSEntityDescription.insertNewObject(forEntityName: "Unit", into: self.managedContext) as! Unit
+
+            unit.number = 250
+            unit.name = "grams"
+            print ("New unit = \(unit.number) \(unit.name!)")
+
+            product.addToHasUnits(unit)
             
             self.save()
         }

@@ -27,6 +27,8 @@ class ItemDetailViewController: UIViewController {
     fileprivate func setMultiplierTo(value:Int16){
         multiplierLabel.text = String(format: "%d", value)
         item?.multiplier = value
+
+        item?.unit = item?.product?.hasUnits?.anyObject() as? Unit
         save()
 
     }
