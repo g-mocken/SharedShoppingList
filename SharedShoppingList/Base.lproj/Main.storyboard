@@ -137,27 +137,76 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="OxB-MX-Tl4">
+                                <rect key="frame" x="16" y="176" width="288" height="334"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="unitCell" id="zte-dS-mWv" customClass="UnitTableViewCell" customModule="SharedShoppingList" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="288" height="43.5"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zte-dS-mWv" id="Vqp-5h-ViH">
+                                            <rect key="frame" x="0.0" y="0.0" width="288" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VCF-8u-GLq">
+                                                    <rect key="frame" x="15" y="11" width="258" height="21.5"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="VCF-8u-GLq" firstAttribute="bottom" secondItem="Vqp-5h-ViH" secondAttribute="bottomMargin" id="7fM-AS-Ic7"/>
+                                                <constraint firstItem="VCF-8u-GLq" firstAttribute="leading" secondItem="Vqp-5h-ViH" secondAttribute="leadingMargin" id="a2C-i7-j1X"/>
+                                                <constraint firstItem="VCF-8u-GLq" firstAttribute="top" secondItem="Vqp-5h-ViH" secondAttribute="topMargin" id="geY-WS-3k3"/>
+                                                <constraint firstItem="VCF-8u-GLq" firstAttribute="trailing" secondItem="Vqp-5h-ViH" secondAttribute="trailingMargin" id="xu9-lE-DEF"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="unitLabel" destination="VCF-8u-GLq" id="llf-Da-tnx"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="CDR-hH-lYX" id="vbL-wV-6dB"/>
+                                    <outlet property="delegate" destination="CDR-hH-lYX" id="KtO-lY-ffM"/>
+                                </connections>
+                            </tableView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i8H-hA-1pU">
+                                <rect key="frame" x="16" y="518" width="30" height="30"/>
+                                <state key="normal" title="Edit"/>
+                                <connections>
+                                    <action selector="editDoneAction:" destination="CDR-hH-lYX" eventType="touchUpInside" id="s9I-jO-rcb"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
+                            <constraint firstItem="i8H-hA-1pU" firstAttribute="top" secondItem="OxB-MX-Tl4" secondAttribute="bottom" constant="8" id="4wV-iB-Cfw"/>
                             <constraint firstItem="3DX-7b-uf1" firstAttribute="centerX" secondItem="5d6-gv-fse" secondAttribute="centerX" id="6vV-xA-GIT"/>
+                            <constraint firstItem="i8H-hA-1pU" firstAttribute="leading" secondItem="7yA-Bi-Dcm" secondAttribute="leadingMargin" id="7fb-ZV-fGu"/>
                             <constraint firstItem="3DX-7b-uf1" firstAttribute="top" secondItem="Mss-Qr-NuE" secondAttribute="top" id="C0q-Fw-f3z"/>
                             <constraint firstItem="kzD-q2-1Mz" firstAttribute="centerX" secondItem="3DX-7b-uf1" secondAttribute="centerX" id="Qyj-Yd-6hi"/>
                             <constraint firstItem="kzD-q2-1Mz" firstAttribute="top" secondItem="3DX-7b-uf1" secondAttribute="bottom" constant="65" id="Sqc-tC-XXi"/>
+                            <constraint firstItem="OxB-MX-Tl4" firstAttribute="leading" secondItem="7yA-Bi-Dcm" secondAttribute="leadingMargin" id="UUh-Cv-9V4"/>
                             <constraint firstItem="Mss-Qr-NuE" firstAttribute="trailing" secondItem="7yA-Bi-Dcm" secondAttribute="trailingMargin" id="atd-US-4hz"/>
+                            <constraint firstItem="OxB-MX-Tl4" firstAttribute="top" secondItem="kzD-q2-1Mz" secondAttribute="bottom" constant="33" id="d2H-zG-gKR"/>
+                            <constraint firstItem="OxB-MX-Tl4" firstAttribute="trailing" secondItem="7yA-Bi-Dcm" secondAttribute="trailingMargin" id="gd8-3n-uNL"/>
                             <constraint firstItem="Mss-Qr-NuE" firstAttribute="top" secondItem="5d6-gv-fse" secondAttribute="top" constant="20" id="ksy-SG-AcF"/>
+                            <constraint firstItem="i8H-hA-1pU" firstAttribute="bottom" secondItem="7yA-Bi-Dcm" secondAttribute="bottomMargin" id="tPG-0p-s7L"/>
                             <constraint firstItem="Mss-Qr-NuE" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="5d6-gv-fse" secondAttribute="leading" constant="1" id="vhj-Nq-hPy"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="5d6-gv-fse"/>
                     </view>
                     <connections>
                         <outlet property="name" destination="kzD-q2-1Mz" id="guM-vh-qnf"/>
+                        <outlet property="tableView" destination="OxB-MX-Tl4" id="vIl-ZK-cDr"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="H4S-ij-Xo7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="WLk-jm-45P" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="3075" y="735"/>
+            <point key="canvasLocation" x="3075" y="734.15492957746483"/>
         </scene>
         <!--CategoryDetailViewController-->
         <scene sceneID="WVN-8u-khy">

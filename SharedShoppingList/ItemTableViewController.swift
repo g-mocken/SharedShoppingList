@@ -223,6 +223,7 @@ class ItemTableViewController: UITableViewController, NSFetchedResultsController
                 let newItem = NSEntityDescription.insertNewObject(forEntityName: "Item", into: managedContext) as! Item
                 newItem.product = selectedProduct
                 newItem.multiplier = 1
+                newItem.unit = selectedProduct.hasUnits?.anyObject() as? Unit // initially pick arbitrary unit
                 list?.addToHasItems(newItem )
                 save()
             }
