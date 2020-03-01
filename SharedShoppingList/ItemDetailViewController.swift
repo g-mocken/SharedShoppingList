@@ -9,6 +9,15 @@
 import UIKit
 import CoreData
 
+func combinedUnit(_ unit: Unit?)->String{
+      if let unit = unit {
+          return String(format: "%d", unit.number) + " " + unit.name!
+      }
+      else {
+          return "unit not set"
+      }
+  }
+
 class ItemDetailViewController: UIViewController {
     var appDelegate: AppDelegate!
     var managedContext: NSManagedObjectContext!
@@ -18,6 +27,7 @@ class ItemDetailViewController: UIViewController {
     @IBOutlet var multiplierLabel: UILabel!
     @IBOutlet var multiplierStepper: UIStepper!
     @IBOutlet var name: UILabel!
+    @IBOutlet var unitPicker: UIButton!
     
     @IBAction func changeNumber(_ sender: UIStepper) {
         setMultiplierTo(value: Int16(sender.value))
@@ -28,7 +38,6 @@ class ItemDetailViewController: UIViewController {
         multiplierLabel.text = String(format: "%d", value)
         item?.multiplier = value
 
-        item?.unit = item?.product?.hasUnits?.anyObject() as? Unit
         save()
 
     }
@@ -41,6 +50,53 @@ class ItemDetailViewController: UIViewController {
         } catch let error as NSError {
             print("Could not save. \(error), \(error.userInfo)")
         }
+    }
+    
+
+  
+    
+    @IBAction func unitPickerAction(_ sender: UIButton) {
+        let alert = UIAlertController(title: NSLocalizedString("Select unit size", comment: ""), message: NSLocalizedString("This list can be edited in the product details.", comment: ""), preferredStyle: .actionSheet)
+        
+        //  sub class alert action to be able to pass on the unit property
+        class UnitAction:UIAlertAction{
+            var unit: Unit?
+            convenience init(unit: Unit, title: String?, style: UIAlertAction.Style, handler: ((UIAlertAction) -> Void)? = nil){
+                self.init(title: title, style: style, handler: handler) // call standard designated initializer
+                self.unit = unit // assign extra property
+            }
+        }
+        
+        
+        let selectAction: (UIAlertAction)->(Void) = { (action) in
+            print (action.title!)
+            // assign selected unit to item
+            self.item?.unit = (action as! UnitAction).unit
+            self.unitPicker.setTitle(combinedUnit((action as! UnitAction).unit!), for: .normal)
+
+        }
+        
+        let cancelAction = UIAlertAction(title: NSLocalizedString("Cancel", comment: ""),
+                                         style: .cancel) { _ in  }
+        
+        alert.addAction(cancelAction)
+        
+        if let titles = item?.product?.hasUnits {
+            for title in titles {
+                let action = UnitAction(unit: title as! Unit, title: combinedUnit((title as! Unit)), style: .default, handler: selectAction)
+                alert.addAction(action)
+            }
+        }
+        
+        self.present(alert, animated: true, completion: nil)
+        
+        // special code for iPad:
+        if let popoverController = alert.popoverPresentationController {
+            popoverController.sourceView = sender
+            popoverController.sourceRect = sender.bounds
+            popoverController.permittedArrowDirections = [UIPopoverArrowDirection.any]
+        }
+        
     }
     
     override func viewDidLoad() {
@@ -58,6 +114,8 @@ class ItemDetailViewController: UIViewController {
         name.text = item?.product?.name
         setMultiplierTo(value: item?.multiplier ?? 0)
         multiplierStepper.value = Double(item?.multiplier ?? 0)
+        
+        unitPicker.setTitle(combinedUnit(item?.unit), for: .normal)
     }
 
 

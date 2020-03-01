@@ -590,6 +590,12 @@
                                     <action selector="changeNumber:" destination="M7U-O1-vlw" eventType="valueChanged" id="LG7-vx-u35"/>
                                 </connections>
                             </stepper>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="12" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X19-ak-sg4">
+                                <rect key="frame" x="57" y="82" width="21" height="24"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Item" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t2c-2g-ric">
                                 <rect key="frame" x="139" y="20" width="42.5" height="24"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
@@ -604,24 +610,29 @@
                                     <segue destination="k6k-ll-cFS" kind="unwind" identifier="returnFromItemDetail" unwindAction="unwindToItemSceneWithSegue:" id="5P4-6B-kY2"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="12" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X19-ak-sg4">
-                                <rect key="frame" x="57" y="82" width="21" height="24"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QAI-9M-IQq">
+                                <rect key="frame" x="57" y="157" width="247" height="36"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                                <state key="normal" title="Placeholder"/>
+                                <connections>
+                                    <action selector="unitPickerAction:" destination="M7U-O1-vlw" eventType="touchUpInside" id="0Wz-OH-dk2"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="Vg0-bH-BkC" firstAttribute="leading" secondItem="X19-ak-sg4" secondAttribute="trailing" constant="35" id="3JJ-Kd-SBm"/>
                             <constraint firstItem="P54-GR-STf" firstAttribute="trailing" secondItem="RAI-MI-RAS" secondAttribute="trailingMargin" id="7rP-En-Rxx"/>
+                            <constraint firstItem="QAI-9M-IQq" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="RAI-MI-RAS" secondAttribute="trailingMargin" id="HVw-KU-4xr"/>
                             <constraint firstItem="X19-ak-sg4" firstAttribute="centerY" secondItem="Vg0-bH-BkC" secondAttribute="centerY" id="J3f-Df-evG"/>
                             <constraint firstItem="X19-ak-sg4" firstAttribute="top" secondItem="wJZ-R6-jQ8" secondAttribute="top" constant="82" id="Ktl-Q8-P4Y"/>
                             <constraint firstItem="t2c-2g-ric" firstAttribute="top" secondItem="P54-GR-STf" secondAttribute="top" id="RP7-RL-FIK"/>
                             <constraint firstItem="X19-ak-sg4" firstAttribute="leading" secondItem="wJZ-R6-jQ8" secondAttribute="leading" constant="57" id="c6e-8J-KYG"/>
                             <constraint firstItem="t2c-2g-ric" firstAttribute="centerX" secondItem="wJZ-R6-jQ8" secondAttribute="centerX" id="cl7-B3-5wh"/>
                             <constraint firstItem="P54-GR-STf" firstAttribute="top" secondItem="wJZ-R6-jQ8" secondAttribute="top" constant="20" id="g2P-oi-85B"/>
+                            <constraint firstItem="QAI-9M-IQq" firstAttribute="leading" secondItem="X19-ak-sg4" secondAttribute="leading" id="gNF-zi-ve7"/>
                             <constraint firstItem="P54-GR-STf" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="wJZ-R6-jQ8" secondAttribute="leading" constant="1" id="hrk-xT-O2G"/>
+                            <constraint firstItem="QAI-9M-IQq" firstAttribute="top" secondItem="X19-ak-sg4" secondAttribute="bottom" constant="51" id="meD-2P-4M3"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="wJZ-R6-jQ8"/>
                     </view>
@@ -630,6 +641,7 @@
                         <outlet property="multiplierLabel" destination="X19-ak-sg4" id="BGX-lS-YTn"/>
                         <outlet property="multiplierStepper" destination="Vg0-bH-BkC" id="CRw-3v-olA"/>
                         <outlet property="name" destination="t2c-2g-ric" id="PQe-X3-qGd"/>
+                        <outlet property="unitPicker" destination="QAI-9M-IQq" id="09F-Ke-xfH"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5qX-ln-Htz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
