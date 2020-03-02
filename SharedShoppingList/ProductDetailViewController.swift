@@ -12,11 +12,11 @@ import CoreData
 protocol ProductDetailViewControllerDelegate: AnyObject {
 
 }
-class UnitTableViewCell:UITableViewCell{
+
+class FixedUnitTableViewCell: UITableViewCell{
     
     @IBOutlet var unitLabel: UILabel!
 }
-
 class ProductDetailViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, NSFetchedResultsControllerDelegate {
     @IBOutlet var tableView: UITableView!
     
@@ -92,37 +92,87 @@ class ProductDetailViewController: UIViewController, UITableViewDataSource, UITa
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "unitCell", for: indexPath) as! UnitTableViewCell
-        
+        let cell = tableView.dequeueReusableCell(withIdentifier: "unitCell", for: indexPath) as! FixedUnitTableViewCell
 
         if (indexPath.row < tableView.numberOfRows(inSection: indexPath.section)-1){
             let unit = fetchedResultsController.object(at: indexPath)
             cell.unitLabel.text = combinedUnit(unit)
         } else {
             cell.unitLabel.text = NSLocalizedString("Select edit to add item...", comment: "")
-
         }
         return cell
     }
     
+    
+    
+    func unitPickerAction(_ sender: UITableViewCell) {
+           let alert = UIAlertController(title: NSLocalizedString("Select unit size", comment: ""), message: NSLocalizedString("This list can be edited in the units tabs.", comment: ""), preferredStyle: .actionSheet)
+           
+           //  sub class alert action to be able to pass on the unit property
+           class UnitAction:UIAlertAction{
+               var unit: Unit?
+               convenience init(unit: Unit, title: String?, style: UIAlertAction.Style, handler: ((UIAlertAction) -> Void)? = nil){
+                   self.init(title: title, style: style, handler: handler) // call standard designated initializer
+                   self.unit = unit // assign extra property
+               }
+           }
+           
+           
+        let fetchRequest = NSFetchRequest<Unit>(entityName: "Unit")
+        let units = try? managedContext.fetch(fetchRequest)
+
+        for u in units ?? [] {
+            print("\(u.number) \(u.name!)")
+        }
+        
+        let selectAction: (UIAlertAction)->(Void) = { (action) in
+            print (action.title!)
+            // assign selected unit to item
+            self.product!.addToHasUnits(((action as! UnitAction).unit!))
+        }
+        
+        let cancelAction = UIAlertAction(title: NSLocalizedString("Cancel", comment: ""),
+                                         style: .cancel) { _ in  }
+        
+        alert.addAction(cancelAction)
+        if let titles = units {
+            for title in titles {
+                let action = UnitAction(unit: title, title: combinedUnit((title)), style: .default, handler: selectAction)
+                alert.addAction(action)
+            }
+        }
+        
+        self.present(alert, animated: true, completion: nil)
+        
+        // special code for iPad:
+        if let popoverController = alert.popoverPresentationController {
+            popoverController.sourceView = sender
+            popoverController.sourceRect = sender.bounds
+            popoverController.permittedArrowDirections = [UIPopoverArrowDirection.any]
+        }
+        
+    }
+    
+    
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-         
-          if editingStyle == .delete {
+        
+        if editingStyle == .delete {
             let unitToDelete = fetchedResultsController.object(at: indexPath)
             managedContext.delete(unitToDelete)
             save()
-
-          } else if editingStyle == .insert {
-            let unit = NSEntityDescription.insertNewObject(forEntityName: "Unit", into: self.managedContext) as! Unit
-            unit.name = "neu"
-            unit.number = 1
-            product!.addToHasUnits(unit)
-
+            
+        } else if editingStyle == .insert {
+ 
+            
+            unitPickerAction(tableView.cellForRow(at: indexPath)!)
+            
+            
+            
+            
             save()
         }
-
-
-      }
+    }
+    
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle{
         if (indexPath.row == tableView.numberOfRows(inSection: indexPath.section)-1) {
             return .insert;
