@@ -363,29 +363,15 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
             product.belongsToCategory = nil //self.categories[0] // for testing, assign fixed category
             print ("New product = \(name)")
             
+            /*
             let unit = NSEntityDescription.insertNewObject(forEntityName: "Unit", into: self.managedContext) as! Unit
 
             unit.number = 250
             unit.name = "grams"
             print ("New unit = \(unit.number) \(unit.name!)")
             product.addToHasUnits(unit)
-
-            let unit2 = NSEntityDescription.insertNewObject(forEntityName: "Unit", into: self.managedContext) as! Unit
- 
-            unit2.number = 500
-            unit2.name = "grams"
-            print ("New unit = \(unit2.number) \(unit2.name!)")
-            product.addToHasUnits(unit2)
-
-            let unit3 = NSEntityDescription.insertNewObject(forEntityName: "Unit", into: self.managedContext) as! Unit
-
-            unit3.number = 1
-            unit3.name = "kilogram"
-            print ("New unit = \(unit3.number) \(unit3.name!)")
-            product.addToHasUnits(unit3)
-
-
-            
+             */
+          
             self.save()
         }
     }

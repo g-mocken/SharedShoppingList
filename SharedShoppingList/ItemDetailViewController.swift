@@ -73,7 +73,7 @@ class ItemDetailViewController: UIViewController {
             // assign selected unit to item
             self.item?.unit = (action as! UnitAction).unit
             self.unitPicker.setTitle(combinedUnit((action as! UnitAction).unit!), for: .normal)
-
+            self.save()
         }
         
         let cancelAction = UIAlertAction(title: NSLocalizedString("Cancel", comment: ""),

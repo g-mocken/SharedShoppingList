@@ -17,29 +17,7 @@ class UnitTableViewCell:UITableViewCell{
 
 class UnitTableViewController: UITableViewController, NSFetchedResultsControllerDelegate {
 
-    @IBAction func numberEditingDidEndAction(_ sender: UITextField) {
-        if let text = sender.text {
-            if let number = Int16(text){
-                unitFor(sender: sender).number = number
-                save()
-            }
-        }
-    }
-    
-    @IBAction func nameEditingDidEndAction(_ sender: UITextField) {
-        unitFor(sender: sender).name = sender.text
-        save()
-    }
-    
-    fileprivate func unitFor(sender: UITextField)->(Unit) {
-        // Use trick from StackOverflow: convert origin to point, then point to indexPath
-        let origin: CGPoint = sender.frame.origin
-        let point: CGPoint? = sender.superview?.convert(origin, to: self.tableView)
-        let indexPath: IndexPath? = self.tableView.indexPathForRow(at: point ?? CGPoint.zero)
-        let unit = fetchedResultsController.object(at: indexPath!)
-        return unit
-    }
-    
+
     var appDelegate: AppDelegate!
        var managedContext: NSManagedObjectContext!
 
@@ -158,23 +136,49 @@ class UnitTableViewController: UITableViewController, NSFetchedResultsController
     }
 
     override func setEditing(_ editing: Bool, animated: Bool){
-        super.setEditing(editing,animated: animated)
-       
-        // enable/disable editing of textfields (in fact the whole cell) without interfering with the animation
-        if (tableView.isEditing){
+       super.setEditing(editing,animated: animated)
+
+        let lastRow = tableView.numberOfRows(inSection: 0) - 2
+        if (editing){
+            // enable editing of textfields (in fact the whole cell) without interfering with the animation
             print("switch edit mode on")
-            for row in 0...tableView.numberOfRows(inSection: 0)-2{
-                let cell = tableView.cellForRow(at: IndexPath(row: row, section: 0)) as! UnitTableViewCell
-                cell.isUserInteractionEnabled = true
+            if  lastRow > 0 {
+                for row in 0...lastRow {
+                    let cell = tableView.cellForRow(at: IndexPath(row: row, section: 0)) as! UnitTableViewCell
+                    cell.isUserInteractionEnabled = true
+                }
             }
+
         }
         else {
             print("switch edit mode off")
-            for row in 0...tableView.numberOfRows(inSection: 0)-2{
-                let cell = tableView.cellForRow(at: IndexPath(row: row, section: 0)) as! UnitTableViewCell
-                cell.isUserInteractionEnabled = false
+            let time = DispatchTime.now() + 0.75
+            if  lastRow > 0 {
+                for row in 0...lastRow{
+                    let indexPath = IndexPath(row: row, section: 0)
+                    let cell = tableView.cellForRow(at: indexPath) as! UnitTableViewCell
+                    let unit = fetchedResultsController.object(at: indexPath)
+
+                    // disable editing of textfields (in fact the whole cell) without interfering with the animation
+
+                    cell.isUserInteractionEnabled = false
+                    print ( "\(cell.numberTextField.text!) \(cell.nameTextField.text!) ")
+                    
+                    // the following however is interfering with the animation, because it triggers cell reloads
+                    DispatchQueue.main.asyncAfter(deadline: time) {
+                        if let text = cell.numberTextField.text {
+                            if let number = Int16(text){
+                                unit.number = number
+                            }
+                        }
+                        unit.name = cell.nameTextField.text
+                        self.save()
+                        
+                    }
+                }
             }
         }
+
     }
     
 
@@ -194,10 +198,13 @@ class UnitTableViewController: UITableViewController, NSFetchedResultsController
     */
 
     
+    var pathsToUpdate:[IndexPath]?
+    
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         tableView.beginUpdates()
+        pathsToUpdate = Array()
     }
-     
+    
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
         switch type {
         case .insert:
@@ -212,7 +219,8 @@ class UnitTableViewController: UITableViewController, NSFetchedResultsController
             fatalError()
         }
     }
-     
+    
+    
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
         switch type {
         case .insert:
@@ -220,18 +228,27 @@ class UnitTableViewController: UITableViewController, NSFetchedResultsController
         case .delete:
             tableView.deleteRows(at: [indexPath!], with: .fade)
         case .update:
-            tableView.reloadRows(at: [indexPath!], with: .fade)
+            if !((pathsToUpdate?.contains(indexPath!) ?? false)){
+                pathsToUpdate?.append(indexPath!) // save destination index path for deferred update
+            }
         case .move:
+            pathsToUpdate?.append(newIndexPath!) // save destination index path for deferred update
             tableView.moveRow(at: indexPath!, to: newIndexPath!)
         @unknown default:
             fatalError()
         }
     }
-     
+    
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         tableView.endUpdates()
+        
+        // perform deferred update
+        if let indexPaths = pathsToUpdate {
+            tableView.reloadRows(at: indexPaths, with: .fade)
+        }
+        pathsToUpdate=nil
     }
-    
+
 
     /*
     // Override to support conditional editing of the table view.

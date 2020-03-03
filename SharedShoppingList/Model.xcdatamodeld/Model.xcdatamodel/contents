@@ -43,8 +43,8 @@
     <entity name="Unit" representedClassName="Unit" syncable="YES" codeGenerationType="class">
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="number" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="isUnitOfItem" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Item" inverseName="unit" inverseEntity="Item"/>
-        <relationship name="isUnitOfProduct" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Product" inverseName="hasUnits" inverseEntity="Product"/>
+        <relationship name="isUnitOfItem" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Item" inverseName="unit" inverseEntity="Item"/>
+        <relationship name="isUnitOfProduct" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Product" inverseName="hasUnits" inverseEntity="Product"/>
     </entity>
     <elements>
         <element name="Item" positionX="-1068.6484375" positionY="-721.89453125" width="128" height="148"/>

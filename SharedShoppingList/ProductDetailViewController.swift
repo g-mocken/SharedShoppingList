@@ -57,7 +57,7 @@ class ProductDetailViewController: UIViewController, UITableViewDataSource, UITa
         let fetchRequest = NSFetchRequest<Unit>(entityName: "Unit")
         // Configure the request's entity, and optionally its predicate
         
-        fetchRequest.predicate = NSPredicate(format: "isUnitOfProduct == %@", product!)
+        fetchRequest.predicate = NSPredicate(format: "isUnitOfProduct CONTAINS %@", product!)
         
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare))]
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: managedContext, sectionNameKeyPath:  nil, cacheName: nil)
