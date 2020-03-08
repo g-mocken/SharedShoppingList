@@ -39,6 +39,8 @@ class ProductDetailViewController: UIViewController, UITableViewDataSource, UITa
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        tableView.setEditing(true, animated: true)
+
         name.text = product?.name
     }
     
@@ -73,16 +75,10 @@ class ProductDetailViewController: UIViewController, UITableViewDataSource, UITa
     }
     
     
-    @IBAction func editDoneAction(_ sender: UIButton) {
-        if (tableView.isEditing){
-            sender.setTitle("Edit", for: .normal)
-            tableView.setEditing(false, animated: true)
-        } else {
-            sender.setTitle("Done", for: .normal)
-            tableView.setEditing(true, animated: true)
-        }
-    }
     
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return NSLocalizedString("Available units:", comment:"")
+    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let sections = fetchedResultsController.sections
@@ -98,7 +94,7 @@ class ProductDetailViewController: UIViewController, UITableViewDataSource, UITa
             let unit = fetchedResultsController.object(at: indexPath)
             cell.unitLabel.text = combinedUnit(unit)
         } else {
-            cell.unitLabel.text = NSLocalizedString("Select edit to add item...", comment: "")
+            cell.unitLabel.text = NSLocalizedString("More …", comment: "")
         }
         return cell
     }

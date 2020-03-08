@@ -98,10 +98,12 @@ class UnitTableViewController: UITableViewController, NSFetchedResultsController
             cell.numberTextField.text = String(unit.number)
             cell.isUserInteractionEnabled = tableView.isEditing
         } else {
-            cell.nameTextField.text = NSLocalizedString("Select edit to add item...", comment: "")
+            cell.nameTextField.text = NSLocalizedString("", comment: "")
             cell.numberTextField.text = ""
             cell.nameTextField.isUserInteractionEnabled = false
             cell.numberTextField.isUserInteractionEnabled = false
+            cell.isUserInteractionEnabled = tableView.isEditing
+
         }
         print("reloading cell at index path \(indexPath)")
 
@@ -138,7 +140,7 @@ class UnitTableViewController: UITableViewController, NSFetchedResultsController
     override func setEditing(_ editing: Bool, animated: Bool){
        super.setEditing(editing,animated: animated)
 
-        let lastRow = tableView.numberOfRows(inSection: 0) - 2
+        let lastRow = tableView.numberOfRows(inSection: 0) - 1
         if (editing){
             // enable editing of textfields (in fact the whole cell) without interfering with the animation
             print("switch edit mode on")
@@ -154,7 +156,7 @@ class UnitTableViewController: UITableViewController, NSFetchedResultsController
             print("switch edit mode off")
             let time = DispatchTime.now() + 0.75
             if  lastRow > 0 {
-                for row in 0...lastRow{
+                for row in 0...lastRow-1 {
                     let indexPath = IndexPath(row: row, section: 0)
                     let cell = tableView.cellForRow(at: indexPath) as! UnitTableViewCell
                     let unit = fetchedResultsController.object(at: indexPath)
