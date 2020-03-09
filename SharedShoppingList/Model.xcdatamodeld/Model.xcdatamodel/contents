@@ -18,7 +18,6 @@
     </entity>
     <entity name="Product" representedClassName="Product" syncable="YES" codeGenerationType="class">
         <attribute name="name" optional="YES" attributeType="String"/>
-        <attribute name="picture" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData"/>
         <attribute name="url" optional="YES" attributeType="URI"/>
         <relationship name="belongsToCategory" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ProductCategory" inverseName="isCategoryOfProduct" inverseEntity="ProductCategory"/>
         <relationship name="hasItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Item" inverseName="product" inverseEntity="Item"/>
@@ -49,7 +48,7 @@
     <elements>
         <element name="Item" positionX="-1068.6484375" positionY="-721.89453125" width="128" height="148"/>
         <element name="Location" positionX="-1338.8984375" positionY="-868.25390625" width="128" height="118"/>
-        <element name="Product" positionX="-1101.83984375" positionY="-920.80078125" width="128" height="148"/>
+        <element name="Product" positionX="-1101.83984375" positionY="-920.80078125" width="128" height="133"/>
         <element name="ProductCategory" positionX="-1342.7734375" positionY="-985.3125" width="128" height="88"/>
         <element name="Shop" positionX="-1572.69140625" positionY="-924.5078125" width="128" height="88"/>
         <element name="ShoppingList" positionX="-1569.3984375" positionY="-710.31640625" width="128" height="88"/>
