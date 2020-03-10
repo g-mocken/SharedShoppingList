@@ -23,37 +23,26 @@ class ProductSelectionTableViewController: UITableViewController, NSFetchedResul
     
     var selectedProduct: Product?
     
-    
- 
-    fileprivate func save() {
-         // save
-         if managedContext.hasChanges {
-             do {
-                 try managedContext.save()
-             } catch let error as NSError {
-                 print("Could not save. \(error), \(error.userInfo)")
-             }
-         }
-     }
-     fileprivate func initializeFetchedResultsController() {
-         
-         let fetchRequest = NSFetchRequest<Product>(entityName: "Product")
-         // Configure the request's entity, and optionally its predicate
-         
-         //fetchRequest.predicate = NSPredicate(format: "isItemOfList == %@", list!)
-         
-         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "belongsToCategory.name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare)), NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare))]
-         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: managedContext, sectionNameKeyPath:  "computedName", cacheName: nil)
-         
-         fetchedResultsController.delegate = self
-         
-         do {
-             try fetchedResultsController.performFetch()
-         } catch {
-             fatalError("Failed to fetch entities: \(error)")
-         }
-         
-     }
+
+    fileprivate func initializeFetchedResultsController() {
+        
+        let fetchRequest = NSFetchRequest<Product>(entityName: "Product")
+        // Configure the request's entity, and optionally its predicate
+        
+        //fetchRequest.predicate = NSPredicate(format: "isItemOfList == %@", list!)
+        
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "belongsToCategory.name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare)), NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare))]
+        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: managedContext, sectionNameKeyPath:  "computedName", cacheName: nil)
+        
+        fetchedResultsController.delegate = self
+        
+        do {
+            try fetchedResultsController.performFetch()
+        } catch {
+            fatalError("Failed to fetch entities: \(error)")
+        }
+        
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

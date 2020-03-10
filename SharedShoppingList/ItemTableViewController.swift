@@ -51,15 +51,6 @@ class ItemTableViewController: UITableViewController, NSFetchedResultsController
     }
     
 
-    fileprivate func save() {
-        // save
-        do {
-            try managedContext.save()
-        } catch let error as NSError {
-            print("Could not save. \(error), \(error.userInfo)")
-        }
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -125,7 +116,7 @@ class ItemTableViewController: UITableViewController, NSFetchedResultsController
         if editingStyle == .delete {
                 let itemToDelete = fetchedResultsController.object(at: indexPath)
                 managedContext.delete(itemToDelete)
-                save()
+                appDelegate.saveContext()
             
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
@@ -225,7 +216,7 @@ class ItemTableViewController: UITableViewController, NSFetchedResultsController
                 newItem.multiplier = 1
                 newItem.unit = selectedProduct.hasUnits?.anyObject() as? Unit // initially pick arbitrary unit
                 list?.addToHasItems(newItem )
-                save()
+                appDelegate.saveContext()
             }
         case "returnFromItemDetail":
             print("returnFromItemDetail")

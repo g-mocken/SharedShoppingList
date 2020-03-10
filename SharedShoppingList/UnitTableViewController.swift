@@ -48,15 +48,6 @@ class UnitTableViewController: UITableViewController, NSFetchedResultsController
        }
        
 
-       fileprivate func save() {
-           // save
-           do {
-               try managedContext.save()
-           } catch let error as NSError {
-               print("Could not save. \(error), \(error.userInfo)")
-           }
-       }
-
        override func viewDidLoad() {
            super.viewDidLoad()
 
@@ -119,21 +110,18 @@ class UnitTableViewController: UITableViewController, NSFetchedResultsController
         }
     }
     
-
-
-    
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
         if editingStyle == .delete {
             let unitToDelete = fetchedResultsController.object(at: indexPath)
             managedContext.delete(unitToDelete)
-            save()
+            appDelegate.saveContext()
             
         } else if editingStyle == .insert {
             let unit = NSEntityDescription.insertNewObject(forEntityName: "Unit", into: self.managedContext) as! Unit
             unit.name = "unit"
             unit.number = 1            
-            save()
+            appDelegate.saveContext()
         }
     }
 
@@ -174,7 +162,7 @@ class UnitTableViewController: UITableViewController, NSFetchedResultsController
                             }
                         }
                         unit.name = cell.nameTextField.text
-                        self.save()
+                        self.appDelegate.saveContext()
                         
                     }
                 }

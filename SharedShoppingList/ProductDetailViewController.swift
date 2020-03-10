@@ -44,16 +44,7 @@ class ProductDetailViewController: UIViewController, UITableViewDataSource, UITa
         name.text = product?.name
     }
     
-    fileprivate func save() {
-        // save
-        if managedContext.hasChanges {
-            do {
-                try managedContext.save()
-            } catch let error as NSError {
-                print("Could not save. \(error), \(error.userInfo)")
-            }
-        }
-    }
+
     fileprivate func initializeFetchedResultsController() {
         
         let fetchRequest = NSFetchRequest<Unit>(entityName: "Unit")
@@ -155,7 +146,7 @@ class ProductDetailViewController: UIViewController, UITableViewDataSource, UITa
         if editingStyle == .delete {
             let unitToDelete = fetchedResultsController.object(at: indexPath)
             managedContext.delete(unitToDelete)
-            save()
+            appDelegate.saveContext()
             
         } else if editingStyle == .insert {
  
@@ -165,7 +156,7 @@ class ProductDetailViewController: UIViewController, UITableViewDataSource, UITa
             
             
             
-            save()
+            appDelegate.saveContext()
         }
     }
     

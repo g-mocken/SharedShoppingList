@@ -23,16 +23,7 @@ class ShoppingListTableViewController: UITableViewController,ShoppingListDetailV
 
     var selectedList: ShoppingList?
     
-    fileprivate func save() {
-         // save
-         if managedContext.hasChanges {
-             do {
-                 try managedContext.save()
-             } catch let error as NSError {
-                 print("Could not save. \(error), \(error.userInfo)")
-             }
-         }
-     }
+
      fileprivate func initializeFetchedResultsController() {
          
          let fetchRequest = NSFetchRequest<ShoppingList>(entityName: "ShoppingList")
@@ -173,7 +164,7 @@ class ShoppingListTableViewController: UITableViewController,ShoppingListDetailV
         if editingStyle == .delete {
             let listToDelete = fetchedResultsController.object(at: indexPath)
             managedContext.delete(listToDelete)
-            save()
+            appDelegate.saveContext()
 
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
@@ -237,7 +228,7 @@ class ShoppingListTableViewController: UITableViewController,ShoppingListDetailV
             list.name = name // no need to use KVC! class is auto-generated
             print ("New = \(name)")
             
-            self.save()
+            self.appDelegate.saveContext()
         }
 }
 
@@ -284,8 +275,8 @@ class ShoppingListTableViewController: UITableViewController,ShoppingListDetailV
         }
         
         if self.viewIfLoaded?.window != nil { // if viewController is visible
-                save() // called for "returnFromShoppingListDetail"
-            }
+            appDelegate.saveContext() // called for "returnFromShoppingListDetail"
+        }
     
     }
 }

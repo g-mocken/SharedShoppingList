@@ -65,15 +65,7 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
         super.viewDidAppear(animated)
     }
     
-    
-    fileprivate func save() {
-        // save
-        do {
-            try managedContext.save()
-        } catch let error as NSError {
-            print("Could not save. \(error), \(error.userInfo)")
-        }
-    }
+  
     fileprivate func initializeFetchedResultsController() {
         
         let fetchRequest = NSFetchRequest<ProductCategory>(entityName: "ProductCategory")
@@ -210,7 +202,7 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
                 selectedCategory = nil
             }
             managedContext.delete(categoryToDelete)
-            save()
+            appDelegate.saveContext()
 
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
@@ -293,7 +285,7 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
             
             print ("New = \(name)")
             
-            self.save()
+            self.appDelegate.saveContext()
         }
         
     }
@@ -346,7 +338,7 @@ class CategorySelectionTableViewController: CategoryTableViewController{
             print("to: \(segue.destination)")
             currentCategory?.name = (segue.source as! CategoryDetailViewController).name.text
             NotificationCenter.default.post(name: Notification.Name("categoriesUpdated"), object: nil)
-            save()
+            appDelegate.saveContext()
         default:
             ()
         }
@@ -369,7 +361,7 @@ class CategoryEditorTableViewController: CategoryTableViewController{
             print("to: \(segue.destination)")
             currentCategory?.name = (segue.source as! CategoryDetailViewController).name.text
             NotificationCenter.default.post(name: Notification.Name("categoriesUpdated"), object: nil)
-            save()
+            appDelegate.saveContext()
         default:
             ()
         }

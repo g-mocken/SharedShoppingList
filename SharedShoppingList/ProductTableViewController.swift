@@ -46,17 +46,6 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
     
     var selectedProduct: Product?
     
-    
-    fileprivate func save() {
-        // save
-        if managedContext.hasChanges {
-            do {
-                try managedContext.save()
-            } catch let error as NSError {
-                print("Could not save. \(error), \(error.userInfo)")
-            }
-        }
-    }
     fileprivate func initializeFetchedResultsController() {
         
         let fetchRequest = NSFetchRequest<Product>(entityName: "Product")
@@ -94,6 +83,8 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
         
         appDelegate = UIApplication.shared.delegate as? AppDelegate
         managedContext = appDelegate.persistentContainer.viewContext
+        managedContext.automaticallyMergesChangesFromParent = true
+
         initializeFetchedResultsController()
     }
     
@@ -109,7 +100,7 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
         super.viewDidAppear(animated)
         
         if (saveNeeded){ // triggered after change of category in rewind segue
-            save() // saving after "returnFromProductCategory" must be deferred until the view is visible, because otherwise it causes problems
+            appDelegate.saveContext() // saving after "returnFromProductCategory" must be deferred until the view is visible, because otherwise it causes problems
             saveNeeded = false
         }
         
@@ -239,7 +230,7 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
         if editingStyle == .delete {
             let productToDelete = fetchedResultsController.object(at: indexPath)
             managedContext.delete(productToDelete)
-            save()
+            appDelegate.saveContext()
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
         }    
@@ -322,7 +313,7 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
         
         if self.viewIfLoaded?.window != nil {
             // viewController is visible (for "returnFromProductCategory", it won't be, and trying to save would trigger updates while it is invisible)
-            save() // called for "returnFromProductDetail"
+            appDelegate.saveContext() // called for "returnFromProductDetail"
         }
         
     }
@@ -372,7 +363,7 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
             product.addToHasUnits(unit)
              */
           
-            self.save()
+            self.appDelegate.saveContext()
         }
     }
     

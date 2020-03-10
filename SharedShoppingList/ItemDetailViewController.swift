@@ -38,20 +38,9 @@ class ItemDetailViewController: UIViewController {
         multiplierLabel.text = String(format: "%d", value)
         item?.multiplier = value
 
-        save()
+        appDelegate.saveContext()
 
     }
-    
-    
-    fileprivate func save() {
-        // save
-        do {
-            try managedContext.save()
-        } catch let error as NSError {
-            print("Could not save. \(error), \(error.userInfo)")
-        }
-    }
-    
 
   
     
@@ -73,7 +62,7 @@ class ItemDetailViewController: UIViewController {
             // assign selected unit to item
             self.item?.unit = (action as! UnitAction).unit
             self.unitPicker.setTitle(combinedUnit((action as! UnitAction).unit!), for: .normal)
-            self.save()
+            self.appDelegate.saveContext()
         }
         
         let cancelAction = UIAlertAction(title: NSLocalizedString("Cancel", comment: ""),
