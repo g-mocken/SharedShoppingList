@@ -59,6 +59,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         })
+        let managedContext = container.viewContext
+        managedContext.automaticallyMergesChangesFromParent = true
+
         return container
     }()
 
