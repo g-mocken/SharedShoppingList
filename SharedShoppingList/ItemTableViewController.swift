@@ -180,6 +180,9 @@ class ItemTableViewController: UITableViewController, NSFetchedResultsController
     
     
     // MARK: - Navigation
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        return !tableView.isEditing
+    }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         print("Segue triggered")

@@ -62,10 +62,14 @@ class ShoppingListTableViewController: UITableViewController,ShoppingListDetailV
 
     
     override func viewWillAppear(_ animated: Bool) {
+        // When selected via the "more" tab, the view controller starts with the toolbar hidden, so unhide it in this case.
+        if (self.navigationController!.isToolbarHidden){
+            self.navigationController!.setToolbarHidden(false, animated: false)
+        }
         super.viewWillAppear(animated)
     }
 
-    
+       
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
