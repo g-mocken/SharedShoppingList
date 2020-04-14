@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="15702" systemVersion="18G3020" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="15702" systemVersion="18G4032" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Item" representedClassName="Item" syncable="YES" codeGenerationType="class">
         <attribute name="multiplier" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="price" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="shop" optional="YES" attributeType="String"/>
         <attribute name="status" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="isAssignedToShop" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Shop" inverseName="isAssignedForItem" inverseEntity="Shop"/>
         <relationship name="isItemOfList" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ShoppingList" inverseName="hasItems" inverseEntity="ShoppingList"/>
         <relationship name="product" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Product" inverseName="hasItems" inverseEntity="Product"/>
         <relationship name="unit" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Unit" inverseName="isUnitOfItem" inverseEntity="Unit"/>
@@ -33,6 +33,7 @@
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="hasCategories" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ProductCategory" inverseName="isAvailableInShops" inverseEntity="ProductCategory"/>
         <relationship name="hasLocations" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Location" inverseName="isLocationInShop" inverseEntity="Location"/>
+        <relationship name="isAssignedForItem" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Item" inverseName="isAssignedToShop" inverseEntity="Item"/>
     </entity>
     <entity name="ShoppingList" representedClassName="ShoppingList" syncable="YES" codeGenerationType="class">
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -47,11 +48,11 @@
     </entity>
     <elements>
         <element name="Item" positionX="-1068.6484375" positionY="-721.89453125" width="128" height="148"/>
-        <element name="Location" positionX="-1338.8984375" positionY="-868.25390625" width="128" height="118"/>
+        <element name="Location" positionX="-1313.16015625" positionY="-859.71484375" width="128" height="118"/>
         <element name="Product" positionX="-1101.83984375" positionY="-920.80078125" width="128" height="133"/>
         <element name="ProductCategory" positionX="-1342.7734375" positionY="-985.3125" width="128" height="88"/>
-        <element name="Shop" positionX="-1572.69140625" positionY="-924.5078125" width="128" height="88"/>
-        <element name="ShoppingList" positionX="-1569.3984375" positionY="-710.31640625" width="128" height="88"/>
+        <element name="Shop" positionX="-1597.7109375" positionY="-708.2578125" width="128" height="103"/>
+        <element name="ShoppingList" positionX="-1463.65625" positionY="-555.50390625" width="128" height="88"/>
         <element name="Unit" positionX="-875.734375" positionY="-841.7890625" width="128" height="103"/>
     </elements>
 </model>

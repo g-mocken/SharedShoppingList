@@ -28,6 +28,7 @@ class ItemDetailViewController: UIViewController {
     @IBOutlet var multiplierStepper: UIStepper!
     @IBOutlet var name: UILabel!
     @IBOutlet var unitPicker: UIButton!
+    @IBOutlet var shopPicker: UIButton!
     
     @IBAction func changeNumber(_ sender: UIStepper) {
         setMultiplierTo(value: Int16(sender.value))
@@ -88,6 +89,51 @@ class ItemDetailViewController: UIViewController {
         
     }
     
+    
+    @IBAction func shopPickerAction(_ sender: UIButton) {
+        let alert = UIAlertController(title: NSLocalizedString("Select shop", comment: ""), message: NSLocalizedString("This list can be edited in the shops tab.", comment: ""), preferredStyle: .actionSheet)
+        
+        //  sub class alert action to be able to pass on the shop property
+        class ShopAction:UIAlertAction{
+            var shop: Shop?
+            convenience init(shop: Shop, title: String?, style: UIAlertAction.Style, handler: ((UIAlertAction) -> Void)? = nil){
+                self.init(title: title, style: style, handler: handler) // call standard designated initializer
+                self.shop = shop // assign extra property
+            }
+        }
+        
+        
+        let selectAction: (UIAlertAction)->(Void) = { (action) in
+            print (action.title!)
+            // assign selected shop to item
+            self.item?.isAssignedToShop = (action as! ShopAction).shop
+            self.shopPicker.setTitle((action as! ShopAction).shop?.name!, for: .normal)
+            self.appDelegate.saveContext()
+        }
+        
+        let cancelAction = UIAlertAction(title: NSLocalizedString("Cancel", comment: ""),
+                                         style: .cancel) { _ in  }
+        
+        alert.addAction(cancelAction)
+        
+        if let titles = item?.product?.belongsToCategory?.isAvailableInShops {
+            for title in titles {
+                let action = ShopAction(shop: title as! Shop, title: (title as! Shop).name, style: .default, handler: selectAction)
+                alert.addAction(action)
+            }
+        }
+        
+        self.present(alert, animated: true, completion: nil)
+        
+        // special code for iPad:
+        if let popoverController = alert.popoverPresentationController {
+            popoverController.sourceView = sender
+            popoverController.sourceRect = sender.bounds
+            popoverController.permittedArrowDirections = [UIPopoverArrowDirection.any]
+        }
+        
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -105,6 +151,8 @@ class ItemDetailViewController: UIViewController {
         multiplierStepper.value = Double(item?.multiplier ?? 0)
         
         unitPicker.setTitle(combinedUnit(item?.unit), for: .normal)
+        shopPicker.setTitle(item?.isAssignedToShop?.name ?? "not set", for: .normal)
+        
     }
 
 

@@ -145,7 +145,7 @@ class ProductDetailViewController: UIViewController, UITableViewDataSource, UITa
         
         if editingStyle == .delete {
             let unitToDelete = fetchedResultsController.object(at: indexPath)
-            managedContext.delete(unitToDelete)
+            self.product!.removeFromHasUnits(unitToDelete)
             appDelegate.saveContext()
             
         } else if editingStyle == .insert {

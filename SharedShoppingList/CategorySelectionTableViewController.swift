@@ -1,27 +1,17 @@
 //
-//  CategoryTableViewController.swift
+//  CategorySelectionTableViewController.swift
 //  SharedShoppingList
 //
-//  Created by Dr. Guido Mocken on 18.02.20.
+//  Created by Dr. Guido Mocken on 14.04.20.
 //  Copyright © 2020 Guido R. Mocken. All rights reserved.
 //
+
 
 import UIKit
 import CoreData
 
-class CategoryTableViewCell: UITableViewCell{
-    @IBOutlet var title: UILabel!
     
-}
-
-protocol CategoryTableViewControllerDelegate: AnyObject {
-
-}
-
-
-
-    
-class CategoryTableViewController: UITableViewController, CategoryDetailViewControllerDelegate, ShopsForCategoriesTableViewControllerDelegate, NSFetchedResultsControllerDelegate {
+class CategorySelectionTableViewController: UITableViewController, CategoryDetailViewControllerDelegate, ShopsForCategoriesTableViewControllerDelegate, NSFetchedResultsControllerDelegate {
 
     weak var delegate:CategoryTableViewControllerDelegate?
 
@@ -103,7 +93,7 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
         let sections = fetchedResultsController.sections
         let sectionInfo = sections![section]
         //print ("\(sectionInfo.numberOfObjects) objects in section \(section)")
-        return sectionInfo.numberOfObjects
+        return sectionInfo.numberOfObjects + 1 // +1 for no category at the top
         
     }
     
@@ -113,14 +103,26 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCell", for: indexPath) as! CategoryTableViewCell
         
-        let category = fetchedResultsController.object(at: IndexPath(row: indexPath.row, section: indexPath.section))
-        
-        cell.title.text = category.name
-        if (selectedCategory == category) && (delegate != nil) {
-            cell.accessoryType = UITableViewCell.AccessoryType.checkmark
+        if indexPath.row == 0 {
+            cell.title.text = uncategorized
+            
+            if (selectedCategory == nil) && (delegate != nil){
+                cell.accessoryType = UITableViewCell.AccessoryType.checkmark
+            } else {
+                cell.accessoryType = UITableViewCell.AccessoryType.none
+            }
         } else {
-            cell.accessoryType = UITableViewCell.AccessoryType.none
+            let category = fetchedResultsController.object(at: IndexPath(row: indexPath.row-1, section: indexPath.section)) // -1 for no category at the top
+            
+            cell.title.text = category.name
+            if (selectedCategory == category) && (delegate != nil) {
+                cell.accessoryType = UITableViewCell.AccessoryType.checkmark
+            } else {
+                cell.accessoryType = UITableViewCell.AccessoryType.none
+            }
         }
+        
+        
         
         return cell
     }
@@ -149,12 +151,12 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
         
         var indexPathShifted : IndexPath?
         if (indexPath != nil){
-            indexPathShifted = IndexPath(row: indexPath!.row, section: indexPath!.section)
+            indexPathShifted = IndexPath(row: indexPath!.row+1, section: indexPath!.section) // +1 for no category at the top
         }
         
         var newIndexPathShifted : IndexPath?
         if (newIndexPath != nil){
-            newIndexPathShifted = IndexPath(row: newIndexPath!.row, section: newIndexPath!.section)
+            newIndexPathShifted = IndexPath(row: newIndexPath!.row+1, section: newIndexPath!.section) // +1 for no category at the top
         }
         switch type {
         case .insert:
@@ -174,13 +176,22 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
         tableView.endUpdates()
         if !tableView.hasUncommittedUpdates { tableView.reloadData() }
     }
+    
+    
+    
+    // Override to support conditional editing of the table view.
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        // Return false if you do not want the specified item to be editable.
+        return indexPath.row != 0
+    }
+    
 
     
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             
-            let categoryToDelete = fetchedResultsController.object(at: IndexPath(row: indexPath.row, section: indexPath.section))
+            let categoryToDelete = fetchedResultsController.object(at: IndexPath(row: indexPath.row-1, section: indexPath.section)) // -1 for no category at the top
             if categoryToDelete == selectedCategory {
                 selectedCategory = nil
             }
@@ -211,8 +222,25 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath){
         print("Selected: row =\(indexPath.row), section=\(indexPath.section)\n")
-//        tableView.deselectRow(at: indexPath as IndexPath, animated: true)
+        tableView.deselectRow(at: indexPath as IndexPath, animated: true)
         
+        if indexPath.row == 0 {
+            selectedCategory = nil
+        } else {
+            selectedCategory = fetchedResultsController.object(at: IndexPath(row: indexPath.row-1, section: indexPath.section)) // -1 for no category at the top
+
+        }
+        
+        // manually perform segue here, so we can suppress it when there is no parent table
+        if (delegate != nil) {
+            performSegue(withIdentifier: "returnFromProductCategory", sender: self)
+        } else {
+            print("not returning")
+        }
+        delegate = nil
+        
+        if !tableView.hasUncommittedUpdates { tableView.reloadData() }
+        // update checkmark placement after the change in the database - not really needed, when leaving the view anyway
     }
     
     
@@ -271,7 +299,7 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
             let vc = segue.destination as! CategoryDetailViewController
             vc.delegate = self
             if let indexPath = tableView.indexPath(for: (sender as? UITableViewCell)!) {
-                currentCategory = fetchedResultsController.object(at: IndexPath(row: indexPath.row, section: indexPath.section))
+                currentCategory = fetchedResultsController.object(at: IndexPath(row: indexPath.row-1, section: indexPath.section)) // -1 for no category at the top
                 vc.category = currentCategory
             }
             
@@ -279,9 +307,11 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
             let vc = segue.destination as! ShopsForCategoriesTableViewController
             vc.delegate = self
             if let indexPath = tableView.indexPath(for: (sender as? UITableViewCell)!) {
-                currentCategory = fetchedResultsController.object(at: IndexPath(row: indexPath.row, section: indexPath.section))
+                currentCategory = fetchedResultsController.object(at: IndexPath(row: indexPath.row-1, section: indexPath.section)) // -1 for no category at the top
                 vc.category = currentCategory
             }
+        case "returnFromProductCategory":
+            let _ = segue.destination as! ProductTableViewController
             
         default:
             ()
@@ -289,13 +319,15 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
     }
     
     
+
+    
     /** See here ho to define unwind segue for auto-going back: https://developer.apple.com/library/archive/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html
      */
-    @IBAction func unwindToCategoryEditorScene(segue: UIStoryboardSegue) {
+    @IBAction func unwindToCategorySelectionScene(segue: UIStoryboardSegue) {
         
         switch (segue.identifier ?? ""){
-        case "returnFromCategoryDetailToEditor":
-            print("returnFromCategoryDetailToEditor")
+        case "returnFromCategoryDetailToSelection":
+            print("returnFromCategoryDetailToSelection")
             print("from: \(segue.source)")
             print("to: \(segue.destination)")
             currentCategory?.name = (segue.source as! CategoryDetailViewController).name.text
@@ -306,5 +338,6 @@ class CategoryTableViewController: UITableViewController, CategoryDetailViewCont
         }
     
     }
-    
 }
+
+

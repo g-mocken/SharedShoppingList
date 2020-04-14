@@ -85,9 +85,9 @@ class ShopTableViewController: UITableViewController, NSFetchedResultsController
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "shopCell", for: indexPath) as! ShopTableViewCell
         
-        let list = fetchedResultsController.object(at: indexPath)
+        let shop = fetchedResultsController.object(at: indexPath)
         
-        cell.title.text = list.name
+        cell.title.text = shop.name
         
         return cell
     }

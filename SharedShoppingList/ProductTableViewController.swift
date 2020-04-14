@@ -272,7 +272,7 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
                 switch (segue.identifier ?? ""){
                 case "goToCategory":
                     print("goToCategory")
-                    let vc = segue.destination as! CategoryTableViewController
+                    let vc = segue.destination as! CategorySelectionTableViewController
                     vc.delegate = self
                     vc.selectedCategory = selectedProduct?.belongsToCategory
                     
@@ -306,9 +306,14 @@ class ProductTableViewController: UITableViewController, CategoryTableViewContro
         case "returnFromProductCategory":
             print("returnFromProductCategory")
             // If the unwind segue is connected to the category cell, it is triggered before the category cell "didSelect" code is run
-            let category = (segue.source as! CategoryTableViewController).selectedCategory
+            let category = (segue.source as! CategorySelectionTableViewController).selectedCategory
+     //       selectedProduct!.belongsToCategory?.removeFromIsCategoryOfProduct(selectedProduct!)
             selectedProduct!.belongsToCategory = category
-            //print("Assigning category \(category?.name ?? "nil") to the selected product \(product.name ?? "nil")")
+            if (category == nil) {
+                print("WARNING: re-assigning to no category does not appear to work with cloudkit")
+            }
+    //            print("Assigning category \(category?.name ?? "nil") to the selected product \(selectedProduct!.name ?? "nil")")
+            
             saveNeeded = true
         default:
             ()

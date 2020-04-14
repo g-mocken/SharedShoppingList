@@ -37,9 +37,11 @@ class ItemTableViewController: UITableViewController, NSFetchedResultsController
         // Configure the request's entity, and optionally its predicate
         
         fetchRequest.predicate = NSPredicate(format: "isItemOfList == %@", list!)
+        
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "isAssignedToShop.name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare)), NSSortDescriptor(key: "product.name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare))]
 
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "product.name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare))]
-        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: managedContext, sectionNameKeyPath: nil, cacheName: nil)
+        
+        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: managedContext, sectionNameKeyPath: "isAssignedToShop.name", cacheName: nil)
         
         fetchedResultsController.delegate = self
 
@@ -70,13 +72,45 @@ class ItemTableViewController: UITableViewController, NSFetchedResultsController
           super.viewWillAppear(animated)
                       
     }
+    
+    
+    var saveNeeded:Bool = false
+    var shopsUpdated:Bool = false
 
+
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if (saveNeeded){ // triggered after change of category in rewind segue
+            appDelegate.saveContext() // saving after "returnFromProductCategory" must be deferred until the view is visible, because otherwise it causes problems
+            saveNeeded = false
+        }
+        
+            
+        if (shopsUpdated){ // triggered by rename of category via explicit notification
+            // fetch updated shops
+            do {
+                try fetchedResultsController.performFetch()
+            } catch {
+                fatalError("Failed to fetch entities: \(error)")
+            }
+            
+            // reload complete table
+            if !tableView.hasUncommittedUpdates {
+                tableView.reloadData()
+            }
+            shopsUpdated = false
+        }
+        
+        
+    }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        //print ("\(fetchedResultsController.sections!.count) sections")
+        print ("\(fetchedResultsController.sections!.count) sections")
         return fetchedResultsController.sections!.count
     }
 
@@ -84,10 +118,17 @@ class ItemTableViewController: UITableViewController, NSFetchedResultsController
         // #warning Incomplete implementation, return the number of rows
         let sections = fetchedResultsController.sections
         let sectionInfo = sections![section]
-        //print ("\(sectionInfo.numberOfObjects) objects in section \(section)")
+        print ("\(sectionInfo.numberOfObjects) objects in section \(section)")
         return sectionInfo.numberOfObjects
     }
 
+    
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        let sections = fetchedResultsController.sections
+        let sectionInfo = sections![section]
+        print ("Header = \(sectionInfo.name)")
+        return sectionInfo.name
+    }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "itemCell", for: indexPath) as! ItemTableViewCell
@@ -223,7 +264,18 @@ class ItemTableViewController: UITableViewController, NSFetchedResultsController
             }
         case "returnFromItemDetail":
             print("returnFromItemDetail")
+            self.shopsUpdated = true
+            // fetch updated shops
+            do {
+                try fetchedResultsController.performFetch()
+            } catch {
+                fatalError("Failed to fetch entities: \(error)")
+            }
             
+            // reload complete table
+            if !tableView.hasUncommittedUpdates {
+                tableView.reloadData()
+            }
         default:
             ()
         }
