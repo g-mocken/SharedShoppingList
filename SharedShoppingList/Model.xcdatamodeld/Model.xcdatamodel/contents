@@ -4,7 +4,7 @@
         <attribute name="multiplier" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="price" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="status" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="isAssignedToShop" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Shop" inverseName="isAssignedForItem" inverseEntity="Shop"/>
+        <relationship name="isAssignedToShop" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Shop" inverseName="isAssignedForItems" inverseEntity="Shop"/>
         <relationship name="isItemOfList" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ShoppingList" inverseName="hasItems" inverseEntity="ShoppingList"/>
         <relationship name="product" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Product" inverseName="hasItems" inverseEntity="Product"/>
         <relationship name="unit" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Unit" inverseName="isUnitOfItem" inverseEntity="Unit"/>
@@ -33,7 +33,7 @@
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="hasCategories" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ProductCategory" inverseName="isAvailableInShops" inverseEntity="ProductCategory"/>
         <relationship name="hasLocations" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Location" inverseName="isLocationInShop" inverseEntity="Location"/>
-        <relationship name="isAssignedForItem" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Item" inverseName="isAssignedToShop" inverseEntity="Item"/>
+        <relationship name="isAssignedForItems" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Item" inverseName="isAssignedToShop" inverseEntity="Item"/>
     </entity>
     <entity name="ShoppingList" representedClassName="ShoppingList" syncable="YES" codeGenerationType="class">
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
